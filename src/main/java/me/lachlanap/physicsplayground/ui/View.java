@@ -28,6 +28,10 @@ class View {
         return metres * pixelsPerMetre;
     }
 
+    public double relativeFromView(double pixels) {
+        return pixels / pixelsPerMetre;
+    }
+
     public double getOffsetPixelsX() {
         return offsetPixelsX;
     }

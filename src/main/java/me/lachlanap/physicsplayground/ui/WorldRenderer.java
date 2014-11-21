@@ -114,8 +114,18 @@ class WorldRenderer extends JComponent {
             double rotation = e.getPreciseWheelRotation();
             Point base = e.getPoint();
 
+            double ox, oy;
+            ox = view.getOffsetPixelsX() - base.x;
+            oy = view.getOffsetPixelsY() - base.y;
+            ox = view.relativeFromView(ox);
+            oy = view.relativeFromView(oy);
+
             double zoom = view.getPixelsPerMetre();
             view.setPixelsPerMetre(zoom - rotation * zoom * 0.1);
+
+            ox = view.relativeToView(ox) + base.x;
+            oy = view.relativeToView(oy) + base.y;
+            view.setPixelOffset(ox, oy);
         }
     }
 }
