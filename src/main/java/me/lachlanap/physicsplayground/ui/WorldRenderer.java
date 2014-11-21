@@ -49,11 +49,16 @@ class WorldRenderer extends JComponent {
     }
 
     private void drawWorld(Graphics2D g) {
-        double x = 1, y = 0.5, w = 0.5, h = 0.5;
+        double x = world.getX(), y = world.getY();
+        double w = world.getWidth(), h = world.getHeight();
+
+        x = view.absoluteToViewX(x);
+        y = view.absoluteToViewY(y);
+        w = view.relativeToView(w);
+        h = view.relativeToView(h);
 
         g.setColor(Color.RED);
-        g.drawRect((int) view.absoluteToViewX(x), (int) view.absoluteToViewY(y),
-                   (int) view.relativeToView(w), (int) view.relativeToView(h));
+        g.drawOval((int) (x - w / 2), (int) (y - h / 2), (int) w, (int) h);
     }
 
     private void drawDiagnostics(Graphics2D g) {
