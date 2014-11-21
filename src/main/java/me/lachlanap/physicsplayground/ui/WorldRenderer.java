@@ -3,6 +3,10 @@ package me.lachlanap.physicsplayground.ui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -23,6 +27,11 @@ class WorldRenderer extends JComponent {
     public WorldRenderer(World world) {
         this.world = world;
         this.view = new View();
+
+        ViewPanningMouseListener vpml = new ViewPanningMouseListener();
+        addMouseListener(vpml);
+        addMouseMotionListener(vpml);
+        addMouseWheelListener(vpml);
     }
 
     public void render(double renderFps, double physicsFps) {
@@ -72,5 +81,41 @@ class WorldRenderer extends JComponent {
         g.setColor(Color.GREEN);
         g.drawString("R FPS: " + renderFps, 10, getHeight() - 10 - 15);
         g.drawString("P FPS: " + physicsFps, 10, getHeight() - 10);
+    }
+
+    private class ViewPanningMouseListener extends MouseAdapter {
+
+        private Point start = null;
+        private double initialOffsetX, initialOffsetY;
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            start = e.getPoint();
+
+            initialOffsetX = view.getOffsetPixelsX();
+            initialOffsetY = view.getOffsetPixelsY();
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            start = null;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            Point diff = e.getPoint();
+            diff.translate(-start.x, -start.y);
+
+            view.setPixelOffset(initialOffsetX + diff.x, initialOffsetY + diff.y);
+        }
+
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            double rotation = e.getPreciseWheelRotation();
+            Point base = e.getPoint();
+
+            double zoom = view.getPixelsPerMetre();
+            view.setPixelsPerMetre(zoom - rotation * zoom * 0.1);
+        }
     }
 }

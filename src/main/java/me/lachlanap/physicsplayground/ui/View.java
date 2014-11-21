@@ -27,4 +27,25 @@ class View {
     public double relativeToView(double metres) {
         return metres * pixelsPerMetre;
     }
+
+    public double getOffsetPixelsX() {
+        return offsetPixelsX;
+    }
+
+    public double getOffsetPixelsY() {
+        return offsetPixelsY;
+    }
+
+    public double getPixelsPerMetre() {
+        return pixelsPerMetre;
+    }
+
+    public void setPixelOffset(double x, double y) {
+        offsetPixelsX = x;
+        offsetPixelsY = y;
+    }
+
+    public void setPixelsPerMetre(double pixelsPerMetre) {
+        this.pixelsPerMetre = Math.max(1, pixelsPerMetre);
+    }
 }
