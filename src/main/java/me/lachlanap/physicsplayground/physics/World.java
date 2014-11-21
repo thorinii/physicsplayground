@@ -25,4 +25,8 @@ public class World {
         return 1;
     }
 
+    public double getFloor() {
+        return 6;
+    }
+
 }

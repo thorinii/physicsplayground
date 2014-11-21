@@ -59,10 +59,17 @@ class WorldRenderer extends JComponent {
 
         g.setColor(Color.RED);
         g.drawOval((int) (x - w / 2), (int) (y - h / 2), (int) w, (int) h);
+
+        double floorLevel = world.getFloor();
+        floorLevel = view.absoluteToViewY(floorLevel);
+        if (floorLevel < getHeight()) {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, (int) floorLevel, getWidth(), getHeight());
+        }
     }
 
     private void drawDiagnostics(Graphics2D g) {
-        g.setColor(Color.BLACK);
+        g.setColor(Color.GREEN);
         g.drawString("R FPS: " + renderFps, 10, getHeight() - 10 - 15);
         g.drawString("P FPS: " + physicsFps, 10, getHeight() - 10);
     }
