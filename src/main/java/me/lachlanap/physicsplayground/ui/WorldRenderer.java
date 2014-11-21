@@ -2,6 +2,7 @@ package me.lachlanap.physicsplayground.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -42,8 +43,22 @@ class WorldRenderer extends JComponent {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, getWidth(), getHeight());
 
+        drawWorld((Graphics2D) g);
+
+        drawDiagnostics((Graphics2D) g);
+    }
+
+    private void drawWorld(Graphics2D g) {
+        double x = 1, y = 0.5, w = 0.5, h = 0.5;
+
+        g.setColor(Color.RED);
+        g.drawRect((int) view.absoluteToViewX(x), (int) view.absoluteToViewY(y),
+                   (int) view.relativeToView(w), (int) view.relativeToView(h));
+    }
+
+    private void drawDiagnostics(Graphics2D g) {
         g.setColor(Color.BLACK);
-        g.drawString("R FPS: " + renderFps, 10, getHeight() - 10 - 40);
+        g.drawString("R FPS: " + renderFps, 10, getHeight() - 10 - 15);
         g.drawString("P FPS: " + physicsFps, 10, getHeight() - 10);
     }
 }
