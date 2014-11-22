@@ -21,7 +21,7 @@ public class World {
 
     private final int[] constraintA, constraintB;
     private final double[] constraintDistance, constraintStrength;
-    private int contraints;
+    private int constraints;
 
     private boolean ewo;
     private boolean deleteAtFloor;
@@ -43,7 +43,7 @@ public class World {
         constraintB = new int[MAX_CONSTRAINTS];
         constraintDistance = new double[MAX_CONSTRAINTS];
         constraintStrength = new double[MAX_CONSTRAINTS];
-        contraints = 0;
+        constraints = 0;
 
         ewo = false;
 
@@ -94,9 +94,9 @@ public class World {
     }
 
     public void addConstraint(int a, int b, double strength) {
-        if (contraints < MAX_CONSTRAINTS) {
-            int id = contraints;
-            contraints++;
+        if (constraints < MAX_CONSTRAINTS) {
+            int id = constraints;
+            constraints++;
 
             constraintA[id] = a;
             constraintB[id] = b;
@@ -130,7 +130,7 @@ public class World {
     }
 
     private void solveDistanceConstraints() {
-        for (int i = 0; i < contraints; i++) {
+        for (int i = 0; i < constraints; i++) {
             int a = constraintA[i];
             int b = constraintB[i];
             double restingDistance = constraintDistance[i];
@@ -151,8 +151,6 @@ public class World {
             y[a] += diffY * 0.5 * difference;
             x[b] -= diffX * 0.5 * difference;
             y[b] -= diffY * 0.5 * difference;
-
-            System.out.println("C" + i + " " + difference);
         }
     }
 
@@ -253,8 +251,20 @@ public class World {
         return r[i] * 2;
     }
 
+    public int getConstraintA(int i) {
+        return constraintA[i];
+    }
+
+    public int getConstraintB(int i) {
+        return constraintB[i];
+    }
+
     public int getObjects() {
         return objects;
+    }
+
+    public int getConstraints() {
+        return constraints;
     }
 
     public double getFloor() {
@@ -292,7 +302,7 @@ public class World {
         deleteFromArray(i, objects, pinX);
         deleteFromArray(i, objects, pinY);
 
-        for (int j = 0; j < contraints;) {
+        for (int j = 0; j < constraints;) {
             if (constraintA[j] == i || constraintB[j] == i)
                 deleteConstraint(j);
             else
@@ -300,15 +310,22 @@ public class World {
         }
 
         objects--;
+
+        for (int j = 0; j < constraints; j++) {
+            if (constraintA[j] == objects)
+                constraintA[j] = i;
+            else if (constraintB[j] == objects)
+                constraintB[j] = i;
+        }
     }
 
     public void deleteConstraint(int i) {
-        deleteFromArray(i, contraints, constraintA);
-        deleteFromArray(i, contraints, constraintB);
-        deleteFromArray(i, contraints, constraintDistance);
-        deleteFromArray(i, contraints, constraintStrength);
+        deleteFromArray(i, constraints, constraintA);
+        deleteFromArray(i, constraints, constraintB);
+        deleteFromArray(i, constraints, constraintDistance);
+        deleteFromArray(i, constraints, constraintStrength);
 
-        contraints--;
+        constraints--;
     }
 
     private void deleteFromArray(int i, int last, double[] array) {

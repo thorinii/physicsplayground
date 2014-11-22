@@ -89,7 +89,7 @@ class WorldRenderer extends JComponent {
 
     private void drawWorld(Graphics2D g) {
         drawObjects(g);
-
+        drawConstraints(g);
         drawFloor(g);
     }
 
@@ -110,6 +110,24 @@ class WorldRenderer extends JComponent {
 
             g.setColor(Color.RED);
             g.drawOval((int) (x - w / 2), (int) (y - h / 2), (int) w, (int) h);
+        }
+    }
+
+    private void drawConstraints(Graphics2D g) {
+        for (int i = 0; i < world.getConstraints(); i++) {
+            int a = world.getConstraintA(i);
+            int b = world.getConstraintB(i);
+
+            double x1 = world.getX(a), y1 = world.getY(a);
+            double x2 = world.getX(b), y2 = world.getY(b);
+
+            x1 = view.absoluteToViewX(x1);
+            y1 = view.absoluteToViewY(y1);
+            x2 = view.absoluteToViewX(x2);
+            y2 = view.absoluteToViewY(y2);
+
+            g.setColor(Color.BLUE);
+            g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
         }
     }
 
