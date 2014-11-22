@@ -16,16 +16,25 @@ class OptionsPanel extends JPanel {
 
     private final World world;
     private final WorldAdvancer advancer;
+    private final WorldRenderer renderer;
 
     public OptionsPanel(World world, WorldAdvancer worldAdvancer, WorldRenderer worldRenderer) {
         this.world = world;
         this.advancer = worldAdvancer;
+        this.renderer = worldRenderer;
 
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
+
         addButton(new Dampener(), "Dampen Velocity");
         addButton(new ToggleEWO(), "Toggle Experimental World Option");
+
+        addButton(new ToolSetter(new AddCircleTool(world, 0.5)), "Add Circles");
+        addButton(new ToolSetter(new AddCircleTool(world, 1)), "Add Big Circles");
+
+        addButton(new ToolSetter(new AddPinnedCircleTool(world, 0.5)), "Add Pinned Circles");
+        addButton(new ToolSetter(new AddPinnedCircleTool(world, 1)), "Add Pinned Big Circles");
     }
 
     private void addButton(final Runnable task, String name) {
@@ -55,6 +64,20 @@ class OptionsPanel extends JPanel {
         @Override
         public void run() {
             world.setEWO(!world.isEWO());
+        }
+    }
+
+    private class ToolSetter implements Runnable {
+
+        final Tool tool;
+
+        public ToolSetter(Tool tool) {
+            this.tool = tool;
+        }
+
+        @Override
+        public void run() {
+            renderer.setTool(tool);
         }
     }
 }

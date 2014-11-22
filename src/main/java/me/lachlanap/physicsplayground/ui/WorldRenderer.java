@@ -24,6 +24,8 @@ class WorldRenderer extends JComponent {
     private int renderFps;
     private int physicsFps;
 
+    private Tool tool;
+
     public WorldRenderer(World world) {
         this.world = world;
         this.view = new View();
@@ -34,6 +36,12 @@ class WorldRenderer extends JComponent {
         addMouseWheelListener(vpml);
 
         setFocusable(true);
+
+        tool = new AddCircleTool(world, 0.5);
+    }
+
+    public void setTool(Tool tool) {
+        this.tool = tool;
     }
 
     public void render(double renderFps, double physicsFps) {
@@ -139,6 +147,7 @@ class WorldRenderer extends JComponent {
 
         private Point start = null;
         private double initialOffsetX, initialOffsetY;
+        private boolean b1;
 
         @Override
         public void mousePressed(MouseEvent e) {
@@ -146,11 +155,13 @@ class WorldRenderer extends JComponent {
             requestFocusInWindow();
 
             if (e.getButton() == MouseEvent.BUTTON1) {
+                b1 = true;
+
                 Point diff = e.getPoint();
                 double x = view.absoluteFromViewX(diff.x);
                 double y = view.absoluteFromViewY(diff.y);
 
-                world.addObject(x, y);
+                tool.mouseDown(x, y);
             } else if (e.getButton() == MouseEvent.BUTTON2) {
                 start = e.getPoint();
 
@@ -164,20 +175,33 @@ class WorldRenderer extends JComponent {
         @Override
         public void mouseReleased(MouseEvent e) {
             start = null;
+
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                b1 = false;
+
+                Point diff = e.getPoint();
+                double x = view.absoluteFromViewX(diff.x);
+                double y = view.absoluteFromViewY(diff.y);
+
+                tool.mouseUp(x, y);
+            }
         }
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            if (start == null) {
-                Point diff = e.getPoint();
-                double x = view.absoluteFromViewX(diff.x);
-                double y = view.absoluteFromViewY(diff.y);
-                world.addObject(x, y);
-            } else {
+            if (start != null) {
                 Point diff = e.getPoint();
                 diff.translate(-start.x, -start.y);
 
                 view.setPixelOffset(initialOffsetX + diff.x, initialOffsetY + diff.y);
+            }
+
+            if (b1) {
+                Point diff = e.getPoint();
+                double x = view.absoluteFromViewX(diff.x);
+                double y = view.absoluteFromViewY(diff.y);
+
+                tool.mouseDrag(x, y);
             }
         }
 

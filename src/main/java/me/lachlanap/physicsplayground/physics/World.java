@@ -16,6 +16,7 @@ public class World {
 
     private final double[] x, y, px, py;
     private final double[] r;
+    private final double[] pinX, pinY;
     private int objects;
 
     private boolean ewo;
@@ -29,6 +30,8 @@ public class World {
         px = new double[MAX_OBJECTS];
         py = new double[MAX_OBJECTS];
         r = new double[MAX_OBJECTS];
+        pinX = new double[MAX_OBJECTS];
+        pinY = new double[MAX_OBJECTS];
         objects = 0;
 
         ewo = false;
@@ -44,20 +47,33 @@ public class World {
         objects = 1;
     }
 
-    public void addObject(double x, double y) {
-        if (objects < MAX_OBJECTS) {
-            initialiseObject(objects, x, y);
-            objects++;
-        }
+    public void addPinnedObject(double x, double y, double radius) {
+        int id = addObject(x, y, radius);
+        pinX[id] = x;
+        pinY[id] = y;
     }
 
-    private void initialiseObject(int i, double posx, double posy) {
+    public int addObject(double x, double y, double radius) {
+        if (objects < MAX_OBJECTS) {
+            int id = objects;
+            initialiseObject(id, x, y, radius);
+            objects++;
+
+            return id;
+        } else
+            return -1;
+    }
+
+    private void initialiseObject(int i, double posx, double posy, double radius) {
         x[i] = posx;
         y[i] = posy;
-        r[i] = 0.5;
+        r[i] = radius;
 
         px[i] = posx;
         py[i] = posy;
+
+        pinX[i] = Double.MAX_VALUE;
+        pinY[i] = Double.MAX_VALUE;
     }
 
     public void update(double timestep) {
@@ -76,8 +92,12 @@ public class World {
     private void solveConstraints() {
         for (int i = 0; i < objects; i++) {
             solveWallAndFloor(i);
-
             solveCollisions(i);
+
+            if (pinX[i] != Double.MAX_VALUE) {
+                x[i] = pinX[i];
+                y[i] = pinY[i];
+            }
         }
     }
 
