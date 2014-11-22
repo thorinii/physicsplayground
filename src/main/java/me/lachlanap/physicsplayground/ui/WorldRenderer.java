@@ -89,7 +89,7 @@ class WorldRenderer extends JComponent {
     private void drawWorld(Graphics2D g) {
         drawObjects(g);
 
-        drawFloorWalls(g);
+        drawFloor(g);
     }
 
     private void drawObjects(Graphics2D g) {
@@ -112,26 +112,12 @@ class WorldRenderer extends JComponent {
         }
     }
 
-    private void drawFloorWalls(Graphics2D g) {
+    private void drawFloor(Graphics2D g) {
         double floorLevel = world.getFloor();
         floorLevel = view.absoluteToViewY(floorLevel);
         if (floorLevel < getHeight()) {
             g.setColor(Color.BLACK);
             g.fillRect(0, (int) floorLevel, getWidth(), getHeight());
-        }
-
-        double walls = world.getWalls();
-        walls = view.absoluteToViewX(walls);
-        if (walls < getWidth()) {
-            g.setColor(Color.BLACK);
-            g.fillRect((int) walls, 0, getWidth(), getHeight());
-        }
-
-        walls = -world.getWalls();
-        walls = view.absoluteToViewX(walls);
-        if (walls > 0) {
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, (int) walls, getHeight());
         }
     }
 

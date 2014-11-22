@@ -12,7 +12,6 @@ public class World {
     private double gravity;
 
     private double floor;
-    private double walls;
 
     private final double[] x, y, px, py;
     private final double[] r;
@@ -20,6 +19,7 @@ public class World {
     private int objects;
 
     private boolean ewo;
+    private boolean deleteAtFloor;
 
     public World() {
         numberOfConstraintSolves = 3;
@@ -42,9 +42,6 @@ public class World {
     public void initialise() {
         objects = 0;
         floor = -3;
-        walls = 20;
-
-        objects = 1;
     }
 
     public void addPinnedObject(double x, double y, double radius) {
@@ -77,16 +74,12 @@ public class World {
     }
 
     public void update(double timestep) {
-        long start;
-
-        start = System.nanoTime();
         for (int i = 0; i < numberOfConstraintSolves; i++)
             solveConstraints();
-        System.out.println("Constraints: " + (System.nanoTime() - start) + "ns");
 
-        start = System.nanoTime();
+        delete();
+
         integrate(timestep);
-        System.out.println("Integration: " + (System.nanoTime() - start) + "ns");
     }
 
     private void solveConstraints() {
@@ -102,23 +95,11 @@ public class World {
     }
 
     private void solveWallAndFloor(int i) {
-        if (y[i] - r[i] < floor) {
+        if (!deleteAtFloor && y[i] - r[i] < floor) {
             y[i] = floor + r[i];
             py[i] = py[i] + (y[i] - py[i]) * 2;
 
             px[i] = x[i] - (x[i] - px[i]) * 0.97;
-        }
-
-        if (x[i] + r[i] > walls) {
-            x[i] = walls - r[i];
-            px[i] = px[i] + (x[i] - px[i]) * 2;
-
-            py[i] = y[i] - (y[i] - py[i]) * 0.97;
-        } else if (x[i] - r[i] < -walls) {
-            x[i] = -walls + r[i];
-            px[i] = px[i] + (x[i] - px[i]) * 2;
-
-            py[i] = y[i] - (y[i] - py[i]) * 0.97;
         }
     }
 
@@ -158,6 +139,18 @@ public class World {
                 y[i] += penetration * normalY * 0.5 * 0.99;
                 x[j] -= penetration * normalX * 0.5 * 0.99;
                 y[j] -= penetration * normalY * 0.5 * 0.99;
+            }
+        }
+    }
+
+    private void delete() {
+        if (!deleteAtFloor)
+            return;
+        for (int i = 0; i < objects;) {
+            if (y[i] - r[i] < floor) {
+                delete(i);
+            } else {
+                i++;
             }
         }
     }
@@ -206,13 +199,9 @@ public class World {
         return floor;
     }
 
-    public double getWalls() {
-        return walls;
-    }
-
     public void setVelocity(int i, double vx, double vy) {
-        px[i] = x[i] - vx;
-        py[i] = y[i] - vy;
+        px[i] = x[i] - vx / 60;
+        py[i] = y[i] - vy / 60;
     }
 
     public boolean isEWO() {
@@ -223,5 +212,28 @@ public class World {
         this.ewo = ewo;
     }
 
+    public boolean isDeleteAtFloor() {
+        return deleteAtFloor;
+    }
 
+    public void setDeleteAtFloor(boolean deleteAtFloor) {
+        this.deleteAtFloor = deleteAtFloor;
+    }
+
+
+    public void delete(int i) {
+        deleteFromArray(i, x);
+        deleteFromArray(i, y);
+        deleteFromArray(i, px);
+        deleteFromArray(i, py);
+        deleteFromArray(i, r);
+        deleteFromArray(i, pinX);
+        deleteFromArray(i, pinY);
+
+        objects--;
+    }
+
+    private void deleteFromArray(int i, double[] array) {
+        array[i] = array[objects - 1];
+    }
 }

@@ -28,6 +28,7 @@ class OptionsPanel extends JPanel {
 
 
         addButton(new Dampener(), "Dampen Velocity");
+        addButton(new ToggleDeleteOnFloor(), "Toggle Delete on Floor");
         addButton(new ToggleEWO(), "Toggle Experimental World Option");
 
         addButton(new ToolSetter(new AddCircleTool(world, 0.5)), "Add Circles");
@@ -55,6 +56,15 @@ class OptionsPanel extends JPanel {
         public void run() {
             for (int i = 0; i < world.getObjects(); i++)
                 world.setVelocity(i, 0, 0);
+        }
+    }
+
+
+    private class ToggleDeleteOnFloor implements Runnable {
+
+        @Override
+        public void run() {
+            world.setDeleteAtFloor(!world.isDeleteAtFloor());
         }
     }
 
