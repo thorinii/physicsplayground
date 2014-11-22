@@ -161,7 +161,7 @@ class WorldRenderer extends JComponent {
                 initialOffsetX = view.getOffsetPixelsX();
                 initialOffsetY = view.getOffsetPixelsY();
             } else if (e.getButton() == MouseEvent.BUTTON3) {
-                world.initialise();
+                world.reset();
             }
         }
 

@@ -36,18 +36,17 @@ public class World {
 
         ewo = false;
 
-        initialise();
+        reset();
     }
 
-    public void initialise() {
+    public void reset() {
         objects = 0;
         floor = -3;
     }
 
     public void addPinnedObject(double x, double y, double radius) {
         int id = addObject(x, y, radius);
-        pinX[id] = x;
-        pinY[id] = y;
+        pin(id);
     }
 
     public int addObject(double x, double y, double radius) {
@@ -69,6 +68,16 @@ public class World {
         px[i] = posx;
         py[i] = posy;
 
+        pinX[i] = Double.MAX_VALUE;
+        pinY[i] = Double.MAX_VALUE;
+    }
+
+    public void pin(int i) {
+        pinX[i] = x[i];
+        pinY[i] = y[i];
+    }
+
+    public void unpin(int i) {
         pinX[i] = Double.MAX_VALUE;
         pinY[i] = Double.MAX_VALUE;
     }

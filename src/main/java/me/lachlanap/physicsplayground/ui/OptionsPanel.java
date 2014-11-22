@@ -39,6 +39,9 @@ class OptionsPanel extends JPanel {
 
         addButton(new ToolSetter(new FlowTool(world, 5)), "Flow Generator");
         addButton(new ToolSetter(new DeleteTool(world, 5)), "Delete");
+
+        addButton(new ToolSetter(new PinTool(world, 5, true)), "Pin");
+        addButton(new ToolSetter(new PinTool(world, 5, false)), "Unpin");
     }
 
     private void addButton(final Runnable task, String name) {
