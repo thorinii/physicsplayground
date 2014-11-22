@@ -21,8 +21,6 @@ public class ConstraintTool implements Tool {
 
     @Override
     public void mouseDown(double x, double y) {
-
-
         for (int i = 0; i < world.getObjects(); i++) {
             if (Math.abs(world.getX(i) - x) < world.getWidth(i) && Math.abs(world.getY(i) - y) < world.getHeight(i)) {
                 objectA = i;

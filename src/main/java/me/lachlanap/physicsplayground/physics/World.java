@@ -52,6 +52,7 @@ public class World {
 
     public void reset() {
         objects = 0;
+        constraints = 0;
         floor = -3;
     }
 
