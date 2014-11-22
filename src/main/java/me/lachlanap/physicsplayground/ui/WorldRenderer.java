@@ -94,6 +94,20 @@ class WorldRenderer extends JComponent {
             g.setColor(Color.BLACK);
             g.fillRect(0, (int) floorLevel, getWidth(), getHeight());
         }
+
+        double walls = world.getWalls();
+        walls = view.absoluteToViewX(walls);
+        if (walls < getWidth()) {
+            g.setColor(Color.BLACK);
+            g.fillRect((int) walls, 0, getWidth(), getHeight());
+        }
+
+        walls = -world.getWalls();
+        walls = view.absoluteToViewX(walls);
+        if (walls > 0) {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, (int) walls, getHeight());
+        }
     }
 
     private void drawDiagnostics(Graphics2D g) {

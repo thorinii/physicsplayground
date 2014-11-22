@@ -11,19 +11,21 @@ public final class World {
     private double x, y, px, py;
     private double w, h;
     private double floor;
+    private double walls;
 
     public World() {
         initialise();
     }
 
     public void initialise() {
-        x = 1;
+        x = 0;
         y = 1;
         w = 1;
         h = 1;
         floor = -3;
+        walls = 5;
 
-        px = x;
+        px = x + 0.1;
         py = y;
     }
 
@@ -33,9 +35,23 @@ public final class World {
     }
 
     private void solveConstraints() {
-        if (y - w / 2 < floor) {
+        if (y - h / 2 < floor) {
             y = floor + w / 2;
             py = py + (y - py) * 2;
+
+            px = x - (x - px) * 0.97;
+        }
+
+        if (x + w / 2 > walls) {
+            x = walls - w / 2;
+            px = px + (x - px) * 2;
+
+            py = y - (y - py) * 0.97;
+        } else if (x - w / 2 < -walls) {
+            x = -walls + w / 2;
+            px = px + (x - px) * 2;
+
+            py = y - (y - py) * 0.97;
         }
     }
 
@@ -43,8 +59,8 @@ public final class World {
         double vx = x - px;
         double vy = y - py;
 
-        double ax = -vx * 0.1;
-        double ay = gravity - vy * 0.1;
+        double ax = -vx * 9;
+        double ay = gravity + -vy * 9;
 
         double nx = x + vx + ax * timestep * timestep;
         double ny = y + vy + ay * timestep * timestep;
@@ -74,6 +90,10 @@ public final class World {
 
     public double getFloor() {
         return floor;
+    }
+
+    public double getWalls() {
+        return walls;
     }
 
 }
