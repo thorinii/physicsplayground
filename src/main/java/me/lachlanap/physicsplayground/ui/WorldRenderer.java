@@ -124,6 +124,7 @@ class WorldRenderer extends JComponent {
 
     private void drawDiagnostics(Graphics2D g) {
         g.setColor(Color.GREEN);
+        g.drawString("Objects: " + world.getObjects(), 10, getHeight() - 10 - 15 * 2);
         g.drawString("R FPS: " + renderFps, 10, getHeight() - 10 - 15);
         g.drawString("P FPS: " + physicsFps, 10, getHeight() - 10);
     }
@@ -138,7 +139,11 @@ class WorldRenderer extends JComponent {
             start = null;
 
             if (e.getButton() == MouseEvent.BUTTON1) {
-                world.addObject();
+                Point diff = e.getPoint();
+                double x = view.absoluteFromViewX(diff.x);
+                double y = view.absoluteFromViewY(diff.y);
+
+                world.addObject(x, y);
             } else if (e.getButton() == MouseEvent.BUTTON2) {
                 start = e.getPoint();
 

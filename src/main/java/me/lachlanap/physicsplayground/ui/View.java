@@ -29,9 +29,19 @@ class View {
         return metres * pixelsPerMetre;
     }
 
+
+    public double absoluteFromViewX(double pixels) {
+        return (pixels - offsetPixelsX) / pixelsPerMetre;
+    }
+
+    public double absoluteFromViewY(double pixels) {
+        return -1 * (pixels - offsetPixelsY) / pixelsPerMetre;
+    }
+
     public double relativeFromView(double pixels) {
         return pixels / pixelsPerMetre;
     }
+
 
     public double getOffsetPixelsX() {
         return offsetPixelsX;

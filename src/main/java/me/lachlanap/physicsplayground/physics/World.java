@@ -34,23 +34,23 @@ public final class World {
         walls = 4;
 
         objects = 1;
-        initialiseObject(0);
+        initialiseObject(0, 0, 1);
     }
 
-    public void addObject() {
+    public void addObject(double x, double y) {
         if (objects < MAX_OBJECTS) {
-            initialiseObject(objects);
+            initialiseObject(objects, x, y);
             objects++;
         }
     }
 
-    private void initialiseObject(int i) {
-        x[i] = 0;
-        y[i] = 1;
+    private void initialiseObject(int i, double posx, double posy) {
+        x[i] = posx;
+        y[i] = posy;
         r[i] = 0.5;
 
-        px[i] = x[i] + 0.1;
-        py[i] = y[i];
+        px[i] = posx + (Math.random() * 0.2 - 0.1);
+        py[i] = posy + (Math.random() * 0.2 - 0.1);
     }
 
     public void update(double timestep) {
