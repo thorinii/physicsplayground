@@ -36,6 +36,9 @@ class OptionsPanel extends JPanel {
 
         addButton(new ToolSetter(new AddPinnedCircleTool(world, 0.5)), "Add Pinned Circles");
         addButton(new ToolSetter(new AddPinnedCircleTool(world, 1)), "Add Pinned Big Circles");
+
+        addButton(new ToolSetter(new FlowTool(world, 5)), "Flow Generator");
+        addButton(new ToolSetter(new DeleteTool(world, 5)), "Delete");
     }
 
     private void addButton(final Runnable task, String name) {

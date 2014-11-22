@@ -1,5 +1,6 @@
 package me.lachlanap.physicsplayground.ui;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import me.lachlanap.physicsplayground.physics.World;
 
@@ -7,31 +8,35 @@ import me.lachlanap.physicsplayground.physics.World;
  *
  * @author lachlan
  */
-public class AddPinnedCircleTool implements Tool {
+public class FlowTool implements Tool {
 
     private final World world;
     private final double radius;
     private double lx, ly;
 
-    public AddPinnedCircleTool(World world, double radius) {
+    public FlowTool(World world, double radius) {
         this.world = world;
         this.radius = radius;
     }
 
     @Override
     public void mouseDown(double x, double y) {
-        world.addPinnedObject(x, y, radius);
         lx = x;
         ly = y;
     }
 
     @Override
     public void mouseDrag(double x, double y) {
-        if (Math.hypot(x - lx, y - ly) > radius) {
-            world.addPinnedObject(x, y, radius);
-            lx = x;
-            ly = y;
+        double dx = x - lx;
+        double dy = y - ly;
+
+        for (int i = 0; i < world.getObjects(); i++) {
+            if (Math.abs(world.getX(i) - x) < radius && Math.abs(world.getY(i) - y) < radius)
+                world.setVelocity(i, dx * 20, dy * 20);
         }
+
+        lx = x;
+        ly = y;
     }
 
     @Override
@@ -40,6 +45,9 @@ public class AddPinnedCircleTool implements Tool {
 
     @Override
     public void draw(Graphics2D g, int x, int y, double toPixels) {
-    }
+        int radiusPixels = (int) (radius * toPixels);
 
+        g.setColor(Color.BLACK);
+        g.drawOval(x - radiusPixels, y - radiusPixels, radiusPixels * 2, radiusPixels * 2);
+    }
 }

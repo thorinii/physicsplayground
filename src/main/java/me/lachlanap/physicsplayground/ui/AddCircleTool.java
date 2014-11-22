@@ -1,5 +1,6 @@
 package me.lachlanap.physicsplayground.ui;
 
+import java.awt.Graphics2D;
 import me.lachlanap.physicsplayground.physics.World;
 
 /**
@@ -30,4 +31,7 @@ public class AddCircleTool implements Tool {
     public void mouseUp(double x, double y) {
     }
 
+    @Override
+    public void draw(Graphics2D g, int x, int y, double toPixels) {
+    }
 }

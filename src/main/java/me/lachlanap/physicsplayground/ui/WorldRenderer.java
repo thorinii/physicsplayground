@@ -65,6 +65,7 @@ class WorldRenderer extends JComponent {
         drawScale((Graphics2D) g);
         drawWorld((Graphics2D) g);
 
+        drawTool((Graphics2D) g);
         drawDiagnostics((Graphics2D) g);
     }
 
@@ -119,6 +120,12 @@ class WorldRenderer extends JComponent {
             g.setColor(Color.BLACK);
             g.fillRect(0, (int) floorLevel, getWidth(), getHeight());
         }
+    }
+
+    private void drawTool(Graphics2D g) {
+        Point mouse = getMousePosition();
+        if (mouse != null)
+            tool.draw(g, mouse.x, mouse.y, view.getPixelsPerMetre());
     }
 
     private void drawDiagnostics(Graphics2D g) {
