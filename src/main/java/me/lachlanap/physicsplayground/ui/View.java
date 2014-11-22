@@ -13,7 +13,8 @@ class View {
     public View() {
         this.pixelsPerMetre = DEFAULT_PPM;
 
-        this.offsetPixelsX = this.offsetPixelsY = 0;
+        this.offsetPixelsX = 0;
+        this.offsetPixelsY = 200;
     }
 
     public double absoluteToViewX(double metres) {
@@ -21,7 +22,7 @@ class View {
     }
 
     public double absoluteToViewY(double metres) {
-        return metres * pixelsPerMetre + offsetPixelsY;
+        return -1 * metres * pixelsPerMetre + offsetPixelsY;
     }
 
     public double relativeToView(double metres) {

@@ -52,9 +52,28 @@ class WorldRenderer extends JComponent {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, getWidth(), getHeight());
 
+        drawScale((Graphics2D) g);
         drawWorld((Graphics2D) g);
 
         drawDiagnostics((Graphics2D) g);
+    }
+
+    private void drawScale(Graphics2D g) {
+        double ppm = view.getPixelsPerMetre();
+        double start, end;
+        g.setColor(Color.LIGHT_GRAY);
+
+        start = Math.floor(view.getOffsetPixelsX() % ppm);
+        end = start + Math.ceil(getWidth() / ppm) * ppm;
+        for (double x = start; x < end; x += ppm) {
+            g.drawLine((int) x, 0, (int) x, getHeight());
+        }
+
+        start = Math.floor(view.getOffsetPixelsY() % ppm);
+        end = start + Math.ceil(getHeight() / ppm) * ppm;
+        for (double y = start; y < end; y += ppm) {
+            g.drawLine(0, (int) y, getWidth(), (int) y);
+        }
     }
 
     private void drawWorld(Graphics2D g) {
@@ -90,10 +109,18 @@ class WorldRenderer extends JComponent {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            start = e.getPoint();
+            if (e.getButton() == MouseEvent.BUTTON2) {
+                start = e.getPoint();
 
-            initialOffsetX = view.getOffsetPixelsX();
-            initialOffsetY = view.getOffsetPixelsY();
+                initialOffsetX = view.getOffsetPixelsX();
+                initialOffsetY = view.getOffsetPixelsY();
+            } else {
+                start = null;
+            }
+
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                world.initialise();
+            }
         }
 
         @Override
@@ -103,6 +130,8 @@ class WorldRenderer extends JComponent {
 
         @Override
         public void mouseDragged(MouseEvent e) {
+            if (start == null)
+                return;
             Point diff = e.getPoint();
             diff.translate(-start.x, -start.y);
 
