@@ -32,6 +32,8 @@ class WorldRenderer extends JComponent {
         addMouseListener(vpml);
         addMouseMotionListener(vpml);
         addMouseWheelListener(vpml);
+
+        setFocusable(true);
     }
 
     public void render(double renderFps, double physicsFps) {

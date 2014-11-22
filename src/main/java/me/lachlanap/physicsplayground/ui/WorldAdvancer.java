@@ -15,6 +15,7 @@ class WorldAdvancer {
     private final Thread thread;
 
     private double timestep;
+    private volatile boolean active;
 
     public WorldAdvancer(World world, WorldRenderer renderer) {
         this.world = world;
@@ -24,10 +25,19 @@ class WorldAdvancer {
         thread.setDaemon(true);
 
         timestep = DEFAULT_TIMESTEP;
+        active = true;
     }
 
     public void start() {
         thread.start();
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     private class AdvancerTask implements Runnable {
@@ -35,6 +45,8 @@ class WorldAdvancer {
         final double NANOS_IN_SECOND = 1_000_000_000;
         long lastUpdate;
         long lastPhysicsUpdate;
+
+        double physicsFps;
 
         @Override
         public void run() {
@@ -56,18 +68,28 @@ class WorldAdvancer {
             lastUpdate = now;
 
             double renderFps = 1 / delta;
-            double physicsFps = 1 / ((now - lastPhysicsUpdate) / NANOS_IN_SECOND);
 
-            update(now);
+            if (active)
+                update(now);
+            else {
+                lastPhysicsUpdate = now;
+                physicsFps = 0;
+            }
+
             render(renderFps, physicsFps);
         }
 
         private void update(long now) {
-            double sinceLastUpdate = (now - lastPhysicsUpdate) / NANOS_IN_SECOND;
+            final double sinceLastUpdate = (now - lastPhysicsUpdate) / NANOS_IN_SECOND;
+            double timeToUse = sinceLastUpdate;
 
-            while (sinceLastUpdate > timestep) {
+            if (sinceLastUpdate > timestep) {
+                physicsFps = 1 / ((now - lastPhysicsUpdate) / NANOS_IN_SECOND);
+            }
+
+            while (timeToUse > timestep) {
                 world.update(timestep);
-                sinceLastUpdate -= timestep;
+                timeToUse -= timestep;
 
                 lastPhysicsUpdate = now;
             }
