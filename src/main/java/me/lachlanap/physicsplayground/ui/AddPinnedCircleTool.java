@@ -39,7 +39,7 @@ public class AddPinnedCircleTool implements Tool {
     }
 
     @Override
-    public void draw(Graphics2D g, int x, int y, double toPixels) {
+    public void draw(Graphics2D g, int x, int y, View view) {
     }
 
 }

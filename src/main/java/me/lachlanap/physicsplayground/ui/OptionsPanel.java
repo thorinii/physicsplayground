@@ -42,6 +42,8 @@ class OptionsPanel extends JPanel {
 
         addButton(new ToolSetter(new PinTool(world, 5, true)), "Pin");
         addButton(new ToolSetter(new PinTool(world, 5, false)), "Unpin");
+
+        addButton(new ToolSetter(new ConstraintTool(world)), "Add Constraint");
     }
 
     private void addButton(final Runnable task, String name) {

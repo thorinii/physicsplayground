@@ -14,5 +14,5 @@ public interface Tool {
 
     public void mouseUp(double x, double y);
 
-    public void draw(Graphics2D g, int x, int y, double toPixels);
+    public void draw(Graphics2D g, int x, int y, View view);
 }

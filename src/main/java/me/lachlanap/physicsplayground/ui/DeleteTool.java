@@ -22,7 +22,7 @@ public class DeleteTool implements Tool {
     public void mouseDown(double x, double y) {
         for (int i = 0; i < world.getObjects();) {
             if (Math.abs(world.getX(i) - x) < radius && Math.abs(world.getY(i) - y) < radius)
-                world.delete(i);
+                world.deleteObject(i);
             else
                 i++;
         }
@@ -32,7 +32,7 @@ public class DeleteTool implements Tool {
     public void mouseDrag(double x, double y) {
         for (int i = 0; i < world.getObjects();) {
             if (Math.abs(world.getX(i) - x) < radius && Math.abs(world.getY(i) - y) < radius)
-                world.delete(i);
+                world.deleteObject(i);
             else
                 i++;
         }
@@ -43,8 +43,8 @@ public class DeleteTool implements Tool {
     }
 
     @Override
-    public void draw(Graphics2D g, int x, int y, double toPixels) {
-        int radiusPixels = (int) (radius * toPixels);
+    public void draw(Graphics2D g, int x, int y, View view) {
+        int radiusPixels = (int) (radius * view.getPixelsPerMetre());
 
         g.setColor(Color.RED);
         g.drawOval(x - radiusPixels, y - radiusPixels, radiusPixels * 2, radiusPixels * 2);

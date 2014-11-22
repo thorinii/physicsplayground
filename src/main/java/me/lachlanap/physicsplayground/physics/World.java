@@ -7,6 +7,7 @@ package me.lachlanap.physicsplayground.physics;
 public class World {
 
     private static final int MAX_OBJECTS = 1024 * 8;
+    private static final int MAX_CONSTRAINTS = 1024;
 
     private int numberOfConstraintSolves;
     private double gravity;
@@ -17,6 +18,10 @@ public class World {
     private final double[] r;
     private final double[] pinX, pinY;
     private int objects;
+
+    private final int[] constraintA, constraintB;
+    private final double[] constraintDistance, constraintStrength;
+    private int contraints;
 
     private boolean ewo;
     private boolean deleteAtFloor;
@@ -33,6 +38,12 @@ public class World {
         pinX = new double[MAX_OBJECTS];
         pinY = new double[MAX_OBJECTS];
         objects = 0;
+
+        constraintA = new int[MAX_CONSTRAINTS];
+        constraintB = new int[MAX_CONSTRAINTS];
+        constraintDistance = new double[MAX_CONSTRAINTS];
+        constraintStrength = new double[MAX_CONSTRAINTS];
+        contraints = 0;
 
         ewo = false;
 
@@ -82,6 +93,19 @@ public class World {
         pinY[i] = Double.MAX_VALUE;
     }
 
+    public void addConstraint(int a, int b, double strength) {
+        if (contraints < MAX_CONSTRAINTS) {
+            int id = contraints;
+            contraints++;
+
+            constraintA[id] = a;
+            constraintB[id] = b;
+            constraintDistance[id] = Math.hypot(x[a] - x[b], y[a] - y[b]);
+            constraintStrength[id] = strength;
+        }
+    }
+
+
     public void update(double timestep) {
         for (int i = 0; i < numberOfConstraintSolves; i++)
             solveConstraints();
@@ -92,6 +116,8 @@ public class World {
     }
 
     private void solveConstraints() {
+        solveDistanceConstraints();
+
         for (int i = 0; i < objects; i++) {
             solveWallAndFloor(i);
             solveCollisions(i);
@@ -100,6 +126,33 @@ public class World {
                 x[i] = pinX[i];
                 y[i] = pinY[i];
             }
+        }
+    }
+
+    private void solveDistanceConstraints() {
+        for (int i = 0; i < contraints; i++) {
+            int a = constraintA[i];
+            int b = constraintB[i];
+            double restingDistance = constraintDistance[i];
+            double strength = constraintStrength[i];
+
+            double xA = x[a];
+            double yA = y[a];
+            double xB = x[b];
+            double yB = y[b];
+
+            double diffX = xA - xB;
+            double diffY = yA - yB;
+            double actualDistance = Math.sqrt(diffX * diffX + diffY * diffY);
+
+            double difference = (restingDistance - actualDistance) / actualDistance;
+
+            x[a] += diffX * 0.5 * difference;
+            y[a] += diffY * 0.5 * difference;
+            x[b] -= diffX * 0.5 * difference;
+            y[b] -= diffY * 0.5 * difference;
+
+            System.out.println("C" + i + " " + difference);
         }
     }
 
@@ -157,7 +210,7 @@ public class World {
             return;
         for (int i = 0; i < objects;) {
             if (y[i] - r[i] < floor) {
-                delete(i);
+                deleteObject(i);
             } else {
                 i++;
             }
@@ -230,19 +283,39 @@ public class World {
     }
 
 
-    public void delete(int i) {
-        deleteFromArray(i, x);
-        deleteFromArray(i, y);
-        deleteFromArray(i, px);
-        deleteFromArray(i, py);
-        deleteFromArray(i, r);
-        deleteFromArray(i, pinX);
-        deleteFromArray(i, pinY);
+    public void deleteObject(int i) {
+        deleteFromArray(i, objects, x);
+        deleteFromArray(i, objects, y);
+        deleteFromArray(i, objects, px);
+        deleteFromArray(i, objects, py);
+        deleteFromArray(i, objects, r);
+        deleteFromArray(i, objects, pinX);
+        deleteFromArray(i, objects, pinY);
+
+        for (int j = 0; j < contraints;) {
+            if (constraintA[j] == i || constraintB[j] == i)
+                deleteConstraint(j);
+            else
+                j++;
+        }
 
         objects--;
     }
 
-    private void deleteFromArray(int i, double[] array) {
-        array[i] = array[objects - 1];
+    public void deleteConstraint(int i) {
+        deleteFromArray(i, contraints, constraintA);
+        deleteFromArray(i, contraints, constraintB);
+        deleteFromArray(i, contraints, constraintDistance);
+        deleteFromArray(i, contraints, constraintStrength);
+
+        contraints--;
+    }
+
+    private void deleteFromArray(int i, int last, double[] array) {
+        array[i] = array[last - 1];
+    }
+
+    private void deleteFromArray(int i, int last, int[] array) {
+        array[i] = array[last - 1];
     }
 }

@@ -44,8 +44,8 @@ public class FlowTool implements Tool {
     }
 
     @Override
-    public void draw(Graphics2D g, int x, int y, double toPixels) {
-        int radiusPixels = (int) (radius * toPixels);
+    public void draw(Graphics2D g, int x, int y, View view) {
+        int radiusPixels = (int) (radius * view.getPixelsPerMetre());
 
         g.setColor(Color.BLACK);
         g.drawOval(x - radiusPixels, y - radiusPixels, radiusPixels * 2, radiusPixels * 2);

@@ -125,7 +125,7 @@ class WorldRenderer extends JComponent {
     private void drawTool(Graphics2D g) {
         Point mouse = getMousePosition();
         if (mouse != null)
-            tool.draw(g, mouse.x, mouse.y, view.getPixelsPerMetre());
+            tool.draw(g, mouse.x, mouse.y, view);
     }
 
     private void drawDiagnostics(Graphics2D g) {
