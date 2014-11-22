@@ -94,6 +94,11 @@ class WorldRenderer extends JComponent {
             w = view.relativeToView(w);
             h = view.relativeToView(h);
 
+            if (x + w / 2 < 0 || x - w / 2 > getWidth())
+                continue;
+            if (y + h / 2 < 0 || y - h / 2 > getHeight())
+                continue;
+
             g.setColor(Color.RED);
             g.drawOval((int) (x - w / 2), (int) (y - h / 2), (int) w, (int) h);
         }
@@ -124,6 +129,7 @@ class WorldRenderer extends JComponent {
 
     private void drawDiagnostics(Graphics2D g) {
         g.setColor(Color.GREEN);
+        g.drawString("EWO: " + (world.isEWO() ? "On" : "Off"), 10, getHeight() - 10 - 15 * 3);
         g.drawString("Objects: " + world.getObjects(), 10, getHeight() - 10 - 15 * 2);
         g.drawString("R FPS: " + renderFps, 10, getHeight() - 10 - 15);
         g.drawString("P FPS: " + physicsFps, 10, getHeight() - 10);
@@ -137,6 +143,7 @@ class WorldRenderer extends JComponent {
         @Override
         public void mousePressed(MouseEvent e) {
             start = null;
+            requestFocusInWindow();
 
             if (e.getButton() == MouseEvent.BUTTON1) {
                 Point diff = e.getPoint();
@@ -161,12 +168,17 @@ class WorldRenderer extends JComponent {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            if (start == null)
-                return;
-            Point diff = e.getPoint();
-            diff.translate(-start.x, -start.y);
+            if (start == null) {
+                Point diff = e.getPoint();
+                double x = view.absoluteFromViewX(diff.x);
+                double y = view.absoluteFromViewY(diff.y);
+                world.addObject(x, y);
+            } else {
+                Point diff = e.getPoint();
+                diff.translate(-start.x, -start.y);
 
-            view.setPixelOffset(initialOffsetX + diff.x, initialOffsetY + diff.y);
+                view.setPixelOffset(initialOffsetX + diff.x, initialOffsetY + diff.y);
+            }
         }
 
         @Override
