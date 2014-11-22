@@ -4,7 +4,7 @@ package me.lachlanap.physicsplayground.physics;
  *
  * @author lachlan
  */
-public class World {
+public final class World {
 
     private double gravity = -9.81;
 
@@ -28,14 +28,32 @@ public class World {
     }
 
     public void update(double timestep) {
+        solveConstraints();
+        integrate(timestep);
+    }
+
+    private void solveConstraints() {
+        if (y - w / 2 < floor) {
+            y = floor + w / 2;
+            py = py + (y - py) * 2;
+        }
+    }
+
+    private void integrate(double timestep) {
         double vx = x - px;
         double vy = y - py;
+
+        double ax = -vx * 0.1;
+        double ay = gravity - vy * 0.1;
+
+        double nx = x + vx + ax * timestep * timestep;
+        double ny = y + vy + ay * timestep * timestep;
 
         px = x;
         py = y;
 
-        x = x + vx + 0;
-        y = y + vy + gravity * timestep * timestep;
+        x = nx;
+        y = ny;
     }
 
     public double getX() {
