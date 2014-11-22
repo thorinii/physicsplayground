@@ -7,6 +7,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import me.lachlanap.physicsplayground.physics.World;
+import me.lachlanap.physicsplayground.ui.tools.*;
 
 /**
  *
@@ -46,6 +47,8 @@ class OptionsPanel extends JPanel {
         addButton(new ToolSetter(new PinTool(world, 5, false)), "Unpin");
 
         addButton(new ToolSetter(new ConstraintTool(world)), "Add Constraint");
+
+        addButton(new ToolSetter(new InflowTool(world)), "Set Inflow");
     }
 
     private void addButton(final Runnable task, String name) {

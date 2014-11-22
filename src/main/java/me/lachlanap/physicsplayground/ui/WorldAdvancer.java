@@ -87,7 +87,7 @@ class WorldAdvancer {
                 physicsFps = 1 / ((now - lastPhysicsUpdate) / NANOS_IN_SECOND);
             }
 
-            while (timeToUse > timestep) {
+            if (timeToUse > timestep) {
                 world.update(timestep);
                 timeToUse -= timestep;
 

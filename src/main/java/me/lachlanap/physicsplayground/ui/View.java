@@ -3,7 +3,7 @@ package me.lachlanap.physicsplayground.ui;
 /**
  * Translates between the world's coordinates and view coordinates.
  */
-class View {
+public class View {
 
     private static final double DEFAULT_PPM = 100;
 

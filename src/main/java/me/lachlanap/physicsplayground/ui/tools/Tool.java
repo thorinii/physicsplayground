@@ -1,6 +1,7 @@
-package me.lachlanap.physicsplayground.ui;
+package me.lachlanap.physicsplayground.ui.tools;
 
 import java.awt.Graphics2D;
+import me.lachlanap.physicsplayground.ui.View;
 
 /**
  *

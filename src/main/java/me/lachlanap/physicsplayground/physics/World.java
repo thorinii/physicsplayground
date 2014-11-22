@@ -26,6 +26,9 @@ public class World {
     private boolean ewo;
     private boolean deleteAtFloor;
 
+    private double inflowX, inflowY;
+    private boolean inflowEnabled;
+
     public World() {
         numberOfConstraintSolves = 3;
         gravity = -9.81;
@@ -112,6 +115,7 @@ public class World {
             solveConstraints();
 
         delete();
+        processInflow();
 
         integrate(timestep);
     }
@@ -216,6 +220,20 @@ public class World {
         }
     }
 
+    private void processInflow() {
+        if (!inflowEnabled)
+            return;
+
+        double radius = 5;
+
+        for (int i = 0; i < 2; i++) {
+            double x = inflowX + (Math.random() * radius * 2 - radius);
+            double y = inflowY + (Math.random() * radius * 2 - radius);
+
+            addObject(x, y, 1);
+        }
+    }
+
     private void integrate(double timestep) {
         for (int i = 0; i < objects; i++) {
             double vx = x[i] - px[i];
@@ -291,6 +309,26 @@ public class World {
 
     public void setDeleteAtFloor(boolean deleteAtFloor) {
         this.deleteAtFloor = deleteAtFloor;
+    }
+
+    public void setInflowEnabled(boolean inflowEnabled) {
+        this.inflowEnabled = inflowEnabled;
+    }
+
+    public void setInflow(double x, double y) {
+        this.inflowX = x;
+        this.inflowY = y;
+
+        if (y < floor)
+            inflowEnabled = false;
+    }
+
+    public double getInflowX() {
+        return inflowX;
+    }
+
+    public double getInflowY() {
+        return inflowY;
     }
 
 

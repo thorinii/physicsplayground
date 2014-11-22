@@ -1,5 +1,7 @@
 package me.lachlanap.physicsplayground.ui;
 
+import me.lachlanap.physicsplayground.ui.tools.AddCircleTool;
+import me.lachlanap.physicsplayground.ui.tools.Tool;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
