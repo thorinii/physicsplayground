@@ -79,17 +79,27 @@ class WorldRenderer extends JComponent {
     }
 
     private void drawWorld(Graphics2D g) {
-        double x = world.getX(), y = world.getY();
-        double w = world.getWidth(), h = world.getHeight();
+        drawObjects(g);
 
-        x = view.absoluteToViewX(x);
-        y = view.absoluteToViewY(y);
-        w = view.relativeToView(w);
-        h = view.relativeToView(h);
+        drawFloorWalls(g);
+    }
 
-        g.setColor(Color.RED);
-        g.drawOval((int) (x - w / 2), (int) (y - h / 2), (int) w, (int) h);
+    private void drawObjects(Graphics2D g) {
+        for (int i = 0; i < world.getObjects(); i++) {
+            double x = world.getX(i), y = world.getY(i);
+            double w = world.getWidth(i), h = world.getHeight(i);
 
+            x = view.absoluteToViewX(x);
+            y = view.absoluteToViewY(y);
+            w = view.relativeToView(w);
+            h = view.relativeToView(h);
+
+            g.setColor(Color.RED);
+            g.drawOval((int) (x - w / 2), (int) (y - h / 2), (int) w, (int) h);
+        }
+    }
+
+    private void drawFloorWalls(Graphics2D g) {
         double floorLevel = world.getFloor();
         floorLevel = view.absoluteToViewY(floorLevel);
         if (floorLevel < getHeight()) {
@@ -125,16 +135,16 @@ class WorldRenderer extends JComponent {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON2) {
+            start = null;
+
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                world.addObject();
+            } else if (e.getButton() == MouseEvent.BUTTON2) {
                 start = e.getPoint();
 
                 initialOffsetX = view.getOffsetPixelsX();
                 initialOffsetY = view.getOffsetPixelsY();
-            } else {
-                start = null;
-            }
-
-            if (e.getButton() == MouseEvent.BUTTON3) {
+            } else if (e.getButton() == MouseEvent.BUTTON3) {
                 world.initialise();
             }
         }

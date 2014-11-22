@@ -6,86 +6,153 @@ package me.lachlanap.physicsplayground.physics;
  */
 public final class World {
 
+    private static final int MAX_OBJECTS = 128;
+
     private double gravity = -9.81;
 
-    private double x, y, px, py;
-    private double w, h;
     private double floor;
     private double walls;
 
+    private final double[] x, y, px, py;
+    private final double[] r;
+    private int objects;
+
     public World() {
+        x = new double[MAX_OBJECTS];
+        y = new double[MAX_OBJECTS];
+        px = new double[MAX_OBJECTS];
+        py = new double[MAX_OBJECTS];
+        r = new double[MAX_OBJECTS];
+        objects = 0;
+
         initialise();
     }
 
     public void initialise() {
-        x = 0;
-        y = 1;
-        w = 1;
-        h = 1;
+        objects = 0;
         floor = -3;
-        walls = 5;
+        walls = 4;
 
-        px = x + 0.1;
-        py = y;
+        objects = 1;
+        initialiseObject(0);
+    }
+
+    public void addObject() {
+        if (objects < MAX_OBJECTS) {
+            initialiseObject(objects);
+            objects++;
+        }
+    }
+
+    private void initialiseObject(int i) {
+        x[i] = 0;
+        y[i] = 1;
+        r[i] = 0.5;
+
+        px[i] = x[i] + 0.1;
+        py[i] = y[i];
     }
 
     public void update(double timestep) {
-        solveConstraints();
+        for (int i = 0; i < 3; i++)
+            solveConstraints();
         integrate(timestep);
     }
 
     private void solveConstraints() {
-        if (y - h / 2 < floor) {
-            y = floor + w / 2;
-            py = py + (y - py) * 2;
+        for (int i = 0; i < objects; i++) {
+            // Wall and Floor
+            if (y[i] - r[i] < floor) {
+                y[i] = floor + r[i];
+                py[i] = py[i] + (y[i] - py[i]) * 2;
 
-            px = x - (x - px) * 0.97;
-        }
+                px[i] = x[i] - (x[i] - px[i]) * 0.97;
+            }
 
-        if (x + w / 2 > walls) {
-            x = walls - w / 2;
-            px = px + (x - px) * 2;
+            if (x[i] + r[i] > walls) {
+                x[i] = walls - r[i];
+                px[i] = px[i] + (x[i] - px[i]) * 2;
 
-            py = y - (y - py) * 0.97;
-        } else if (x - w / 2 < -walls) {
-            x = -walls + w / 2;
-            px = px + (x - px) * 2;
+                py[i] = y[i] - (y[i] - py[i]) * 0.97;
+            } else if (x[i] - r[i] < -walls) {
+                x[i] = -walls + r[i];
+                px[i] = px[i] + (x[i] - px[i]) * 2;
 
-            py = y - (y - py) * 0.97;
+                py[i] = y[i] - (y[i] - py[i]) * 0.97;
+            }
+
+            // Circle-circle collisions
+            double x1 = x[i];
+            double y1 = y[i];
+            for (int j = i + 1; j < objects; j++) {
+                double rBoth = r[i] + r[j];
+                double rBothSq = rBoth * rBoth;
+
+                double x2 = x[j];
+                double y2 = y[j];
+
+                double distSq = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+
+                if (distSq < rBothSq) {
+                    double dist = Math.sqrt(distSq);
+                    double penetration = rBoth - dist;
+                    double normalX;
+                    double normalY;
+
+                    if (dist > 0) {
+                        normalX = (x1 - x2) / dist;
+                        normalY = (y1 - y2) / dist;
+                    } else {
+                        normalX = 1;
+                        normalY = 0;
+                    }
+
+                    x[i] += penetration * normalX * 0.5 * 0.99;
+                    y[i] += penetration * normalY * 0.5 * 0.99;
+                    x[j] -= penetration * normalX * 0.5 * 0.99;
+                    y[j] -= penetration * normalY * 0.5 * 0.99;
+                }
+            }
         }
     }
 
     private void integrate(double timestep) {
-        double vx = x - px;
-        double vy = y - py;
+        for (int i = 0; i < objects; i++) {
+            double vx = x[i] - px[i];
+            double vy = y[i] - py[i];
 
-        double ax = -vx * 9;
-        double ay = gravity + -vy * 9;
+            double ax = -vx * 9;
+            double ay = gravity + -vy * 9;
 
-        double nx = x + vx + ax * timestep * timestep;
-        double ny = y + vy + ay * timestep * timestep;
+            double nx = x[i] + vx + ax * timestep * timestep;
+            double ny = y[i] + vy + ay * timestep * timestep;
 
-        px = x;
-        py = y;
+            px[i] = x[i];
+            py[i] = y[i];
 
-        x = nx;
-        y = ny;
+            x[i] = nx;
+            y[i] = ny;
+        }
     }
 
-    public double getX() {
-        return x;
+    public double getX(int i) {
+        return x[i];
     }
 
-    public double getY() {
-        return y;
+    public double getY(int i) {
+        return y[i];
     }
 
-    public double getWidth() {
-        return w;
+    public double getWidth(int i) {
+        return r[i] * 2;
     }
 
-    public double getHeight() {
-        return h;
+    public double getHeight(int i) {
+        return r[i] * 2;
+    }
+
+    public int getObjects() {
+        return objects;
     }
 
     public double getFloor() {
