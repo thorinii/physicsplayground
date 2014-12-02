@@ -1,7 +1,5 @@
 package me.lachlanap.physicsplayground.ui;
 
-import me.lachlanap.physicsplayground.ui.tools.AddCircleTool;
-import me.lachlanap.physicsplayground.ui.tools.Tool;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -13,6 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import me.lachlanap.physicsplayground.physics.World;
+import me.lachlanap.physicsplayground.ui.tools.AddCircleTool;
+import me.lachlanap.physicsplayground.ui.tools.Tool;
 
 /**
  *
@@ -150,8 +150,9 @@ class WorldRenderer extends JComponent {
 
     private void drawDiagnostics(Graphics2D g) {
         g.setColor(Color.GREEN);
-        g.drawString("EWO: " + (world.isEWO() ? "On" : "Off"), 10, getHeight() - 10 - 15 * 3);
-        g.drawString("Objects: " + world.getObjects(), 10, getHeight() - 10 - 15 * 2);
+        g.drawString("EWO: " + (world.isEWO() ? "On" : "Off"), 10, getHeight() - 10 - 15 * 4);
+        g.drawString("Objects: " + world.getObjects(), 10, getHeight() - 10 - 15 * 3);
+        g.drawString("Constraints: " + world.getConstraints(), 10, getHeight() - 10 - 15 * 2);
         g.drawString("R FPS: " + renderFps, 10, getHeight() - 10 - 15);
         g.drawString("P FPS: " + physicsFps, 10, getHeight() - 10);
     }

@@ -7,7 +7,7 @@ package me.lachlanap.physicsplayground.physics;
 public class World {
 
     private static final int MAX_OBJECTS = 1024 * 8;
-    private static final int MAX_CONSTRAINTS = 1024;
+    private static final int MAX_CONSTRAINTS = MAX_OBJECTS * 2;
 
     private int numberOfConstraintSolves;
     private double gravity;
@@ -100,12 +100,13 @@ public class World {
     public void addConstraint(int a, int b, double strength) {
         if (constraints < MAX_CONSTRAINTS) {
             int id = constraints;
-            constraints++;
 
             constraintA[id] = a;
             constraintB[id] = b;
             constraintDistance[id] = Math.hypot(x[a] - x[b], y[a] - y[b]);
             constraintStrength[id] = strength;
+
+            constraints++;
         }
     }
 
@@ -150,7 +151,11 @@ public class World {
             double diffY = yA - yB;
             double actualDistance = Math.sqrt(diffX * diffX + diffY * diffY);
 
-            double difference = (restingDistance - actualDistance) / actualDistance;
+            double difference;
+            if (actualDistance == 0)
+                difference = 1;
+            else
+                difference = (restingDistance - actualDistance) / actualDistance;
 
             x[a] += diffX * 0.5 * difference;
             y[a] += diffY * 0.5 * difference;
@@ -158,6 +163,7 @@ public class World {
             y[b] -= diffY * 0.5 * difference;
         }
     }
+
 
     private void solveWallAndFloor(int i) {
         if (!deleteAtFloor && y[i] - r[i] < floor) {

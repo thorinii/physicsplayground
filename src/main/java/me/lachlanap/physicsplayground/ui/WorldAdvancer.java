@@ -46,6 +46,7 @@ class WorldAdvancer {
         long lastUpdate;
         long lastPhysicsUpdate;
 
+        double renderFps;
         double physicsFps;
 
         @Override
@@ -56,6 +57,8 @@ class WorldAdvancer {
             try {
                 while (true) {
                     gameLoop();
+
+                    Thread.sleep(1);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -65,18 +68,17 @@ class WorldAdvancer {
         private void gameLoop() {
             final long now = System.nanoTime();
             final double delta = (now - lastUpdate) / NANOS_IN_SECOND;
-            lastUpdate = now;
 
-            double renderFps = 1 / delta;
+            renderFps = 1 / delta;
 
-            if (active)
+            if (active) {
                 update(now);
-            else {
+            } else {
                 lastPhysicsUpdate = now;
                 physicsFps = 0;
-            }
 
-            render(renderFps, physicsFps);
+                render(now);
+            }
         }
 
         private void update(long now) {
@@ -92,11 +94,14 @@ class WorldAdvancer {
                 timeToUse -= timestep;
 
                 lastPhysicsUpdate = now;
+
+                render(now);
             }
         }
 
-        private void render(double renderFps, double physicsFps) {
+        private void render(long now) {
             renderer.render(renderFps, physicsFps);
+            lastUpdate = now;
         }
     }
 }

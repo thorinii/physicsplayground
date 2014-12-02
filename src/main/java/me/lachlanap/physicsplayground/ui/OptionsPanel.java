@@ -35,6 +35,7 @@ class OptionsPanel extends JPanel {
         addButton(new ToolSetter(new AddCircleTool(world, 0.5)), "Add Circles");
         addButton(new ToolSetter(new AddCircleTool(world, 1)), "Add Big Circles");
 
+        addButton(new ToolSetter(new AddRopeTool(world, 0.1)), "Add Tiny Rope");
         addButton(new ToolSetter(new AddRopeTool(world, 1)), "Add Big Rope");
 
         addButton(new ToolSetter(new AddPinnedCircleTool(world, 0.5)), "Add Pinned Circles");
@@ -57,6 +58,7 @@ class OptionsPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                renderer.requestFocusInWindow();
                 task.run();
             }
         });
