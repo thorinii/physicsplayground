@@ -50,4 +50,9 @@ public class DeleteTool implements Tool {
         g.setColor(Color.RED);
         g.drawOval(x - radiusPixels, y - radiusPixels, radiusPixels * 2, radiusPixels * 2);
     }
+
+    @Override
+    public String getLabel() {
+        return "Delete";
+    }
 }

@@ -12,11 +12,15 @@ import me.lachlanap.physicsplayground.ui.View;
 public class ConstraintTool implements Tool {
 
     private final World world;
+    private final double strength;
+
     private int objectA, objectB;
     private double ax, ay, bx, by;
 
-    public ConstraintTool(World world) {
+    public ConstraintTool(World world, double strength) {
         this.world = world;
+        this.strength = strength;
+
         objectA = objectB = -1;
     }
 
@@ -52,7 +56,7 @@ public class ConstraintTool implements Tool {
     @Override
     public void mouseUp(double x, double y) {
         if (objectA != -1 && objectB != -1) {
-            world.addConstraint(objectA, objectB, 1);
+            world.addConstraint(objectA, objectB, strength);
         }
 
         objectA = -1;
@@ -88,5 +92,13 @@ public class ConstraintTool implements Tool {
                 g.drawLine(vbx, vby, vax, vay);
             }
         }
+    }
+
+    @Override
+    public String getLabel() {
+        if (strength == 0)
+            return "Add Constraint (infinite)";
+        else
+            return "Add Constraint (" + strength + "N)";
     }
 }

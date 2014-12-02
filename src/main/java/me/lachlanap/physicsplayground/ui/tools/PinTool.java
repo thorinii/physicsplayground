@@ -56,4 +56,12 @@ public class PinTool implements Tool {
         g.setColor(Color.BLACK);
         g.drawOval(x - radiusPixels, y - radiusPixels, radiusPixels * 2, radiusPixels * 2);
     }
+
+    @Override
+    public String getLabel() {
+        if (pin)
+            return "Pin";
+        else
+            return "Unpin";
+    }
 }

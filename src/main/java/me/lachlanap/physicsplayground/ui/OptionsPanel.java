@@ -38,6 +38,10 @@ class OptionsPanel extends JPanel {
         addButton(new ToolSetter(new AddRopeTool(world, 0.1)), "Add Tiny Rope");
         addButton(new ToolSetter(new AddRopeTool(world, 1)), "Add Big Rope");
 
+        addButton(new ToolSetter(new AddGridTool(world, 0.1)), "Add Tiny Grid");
+        addButton(new ToolSetter(new AddGridTool(world, 0.5)), "Add Grid");
+        addButton(new ToolSetter(new AddGridTool(world, 1)), "Add Big Grid");
+
         addButton(new ToolSetter(new AddPinnedCircleTool(world, 0.5)), "Add Pinned Circles");
         addButton(new ToolSetter(new AddPinnedCircleTool(world, 1)), "Add Pinned Big Circles");
 
@@ -47,7 +51,7 @@ class OptionsPanel extends JPanel {
         addButton(new ToolSetter(new PinTool(world, 5, true)), "Pin");
         addButton(new ToolSetter(new PinTool(world, 5, false)), "Unpin");
 
-        addButton(new ToolSetter(new ConstraintTool(world)), "Add Constraint");
+        addButton(new ToolSetter(new ConstraintTool(world, 0)), "Add Infinite Constraint");
 
         addButton(new ToolSetter(new InflowTool(world)), "Set Inflow");
     }

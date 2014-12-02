@@ -1,5 +1,6 @@
 package me.lachlanap.physicsplayground.ui.tools;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import me.lachlanap.physicsplayground.physics.World;
 import me.lachlanap.physicsplayground.ui.View;
@@ -34,5 +35,13 @@ public class AddCircleTool implements Tool {
 
     @Override
     public void draw(Graphics2D g, int x, int y, View view) {
+        g.setColor(Color.GREEN);
+        g.drawLine(x - 10, y, x + 10, y);
+        g.drawLine(x, y - 10, x, y + 10);
+    }
+
+    @Override
+    public String getLabel() {
+        return "Add Circle (" + radius + "m)";
     }
 }

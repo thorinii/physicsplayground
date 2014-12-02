@@ -35,8 +35,13 @@ public class InflowTool implements Tool {
 
     @Override
     public void draw(Graphics2D g, int x, int y, View view) {
-        g.setColor(Color.BLACK);
+        g.setColor(Color.GREEN);
         g.drawLine(x - 10, y, x + 10, y);
         g.drawLine(x, y - 10, x, y + 10);
+    }
+
+    @Override
+    public String getLabel() {
+        return "Set Inflow";
     }
 }

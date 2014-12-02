@@ -73,25 +73,29 @@ class WorldRenderer extends JComponent {
 
     private void drawScale(Graphics2D g) {
         double ppm = view.getPixelsPerMetre();
-        double start, end;
-        g.setColor(Color.LIGHT_GRAY);
 
-        start = Math.floor(view.getOffsetPixelsX() % ppm);
-        end = start + Math.ceil(getWidth() / ppm) * ppm;
-        for (double x = start; x < end; x += ppm) {
+        g.setColor(Color.LIGHT_GRAY);
+        drawScaleLines(ppm, g);
+
+        g.setColor(Color.GRAY);
+        drawScaleLines(ppm * 10, g);
+    }
+
+    private void drawScaleLines(double ppm, Graphics2D g) {
+        double start = Math.floor(view.getOffsetPixelsX() % ppm);
+        double end = start + Math.ceil(getWidth() / ppm) * ppm;
+        for (double x = start; x < end; x += ppm)
             g.drawLine((int) x, 0, (int) x, getHeight());
-        }
 
         start = Math.floor(view.getOffsetPixelsY() % ppm);
         end = start + Math.ceil(getHeight() / ppm) * ppm;
-        for (double y = start; y < end; y += ppm) {
+        for (double y = start; y < end; y += ppm)
             g.drawLine(0, (int) y, getWidth(), (int) y);
-        }
     }
 
     private void drawWorld(Graphics2D g) {
-        drawObjects(g);
         drawConstraints(g);
+        drawObjects(g);
         drawFloor(g);
     }
 
@@ -110,7 +114,7 @@ class WorldRenderer extends JComponent {
             if (y + h / 2 < 0 || y - h / 2 > getHeight())
                 continue;
 
-            g.setColor(Color.RED);
+            g.setColor(world.isPinned(i) ? Color.ORANGE : Color.RED);
             g.drawOval((int) (x - w / 2), (int) (y - h / 2), (int) w, (int) h);
         }
     }
@@ -137,7 +141,7 @@ class WorldRenderer extends JComponent {
         double floorLevel = world.getFloor();
         floorLevel = view.absoluteToViewY(floorLevel);
         if (floorLevel < getHeight()) {
-            g.setColor(Color.BLACK);
+            g.setColor(world.isDeleteAtFloor() ? Color.BLACK : Color.DARK_GRAY);
             g.fillRect(0, (int) floorLevel, getWidth(), getHeight());
         }
     }
@@ -149,7 +153,11 @@ class WorldRenderer extends JComponent {
     }
 
     private void drawDiagnostics(Graphics2D g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, getHeight() - 10 - 15 * 6, 300, getHeight());
+
         g.setColor(Color.GREEN);
+        g.drawString("Tool: " + tool.getLabel(), 10, getHeight() - 10 - 15 * 5);
         g.drawString("EWO: " + (world.isEWO() ? "On" : "Off"), 10, getHeight() - 10 - 15 * 4);
         g.drawString("Objects: " + world.getObjects(), 10, getHeight() - 10 - 15 * 3);
         g.drawString("Constraints: " + world.getConstraints(), 10, getHeight() - 10 - 15 * 2);

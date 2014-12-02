@@ -43,4 +43,8 @@ public class AddPinnedCircleTool implements Tool {
     public void draw(Graphics2D g, int x, int y, View view) {
     }
 
+    @Override
+    public String getLabel() {
+        return "Add Pinned Circle (" + radius + "m)";
+    }
 }

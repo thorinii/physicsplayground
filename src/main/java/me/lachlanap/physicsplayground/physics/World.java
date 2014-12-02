@@ -56,7 +56,7 @@ public class World {
     public void reset() {
         objects = 0;
         constraints = 0;
-        floor = -3;
+        floor = 0;
     }
 
     public void addPinnedObject(double x, double y, double radius) {
@@ -97,6 +97,10 @@ public class World {
         pinY[i] = Double.MAX_VALUE;
     }
 
+    public boolean isPinned(int i) {
+        return pinX[i] != Double.MAX_VALUE;
+    }
+
     public void addConstraint(int a, int b, double strength) {
         if (constraints < MAX_CONSTRAINTS) {
             int id = constraints;
@@ -128,7 +132,7 @@ public class World {
             solveWallAndFloor(i);
             solveCollisions(i);
 
-            if (pinX[i] != Double.MAX_VALUE) {
+            if (isPinned(i)) {
                 x[i] = pinX[i];
                 y[i] = pinY[i];
             }
@@ -242,6 +246,9 @@ public class World {
 
     private void integrate(double timestep) {
         for (int i = 0; i < objects; i++) {
+            if (isPinned(i))
+                continue;
+
             double vx = x[i] - px[i];
             double vy = y[i] - py[i];
 
