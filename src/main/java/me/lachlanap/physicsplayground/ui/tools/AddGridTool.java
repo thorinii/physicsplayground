@@ -62,8 +62,13 @@ public class AddGridTool implements Tool {
             // Create the objects
             for (int x = 0; x < widthN; x++) {
                 for (int y = 0; y < heightN; y++) {
-                    objectIds[x][y] = world.addObject(startX + x * diameter + Math.random() * radius * 0.01,
-                                                      startY + y * diameter + Math.random() * radius * 0.01,
+                    double posX = startX + x * diameter + Math.random() * radius * 0.01;
+                    double posY = startY + y * diameter + Math.random() * radius * 0.01;
+
+                    if (y % 2 == 1)
+                        posX -= radius;
+
+                    objectIds[x][y] = world.addObject(posX, posY,
                                                       radius * 0.95);
                 }
             }
@@ -90,7 +95,7 @@ public class AddGridTool implements Tool {
 
             // Constrain on diagonal
             for (int x = 0; x < widthN - 1; x++) {
-                for (int y = 0; y < heightN - 1; y++) {
+                for (int y = 0; y < heightN - 1; y += 2) {
                     int a = objectIds[x][y];
                     int b = objectIds[x + 1][y + 1];
 
@@ -100,7 +105,7 @@ public class AddGridTool implements Tool {
 
             // Constrain on diagonal
             for (int x = 1; x < widthN; x++) {
-                for (int y = 0; y < heightN - 1; y++) {
+                for (int y = 1; y < heightN - 1; y += 2) {
                     int a = objectIds[x][y];
                     int b = objectIds[x - 1][y + 1];
 

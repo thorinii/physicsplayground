@@ -14,10 +14,9 @@ public class World {
 
     private double floor;
 
-    private final double[] x, y, px, py;
-    private final double[] r;
-    private final double[] pinX, pinY;
-    private int objects;
+    private final DoubleList x, y, px, py;
+    private final DoubleList r;
+    private final DoubleList pinX, pinY;
 
     private final int[] constraintA, constraintB;
     private final double[] constraintDistance, constraintStrength;
@@ -33,14 +32,14 @@ public class World {
         numberOfConstraintSolves = 3;
         gravity = -9.81;
 
-        x = new double[MAX_OBJECTS];
-        y = new double[MAX_OBJECTS];
-        px = new double[MAX_OBJECTS];
-        py = new double[MAX_OBJECTS];
-        r = new double[MAX_OBJECTS];
-        pinX = new double[MAX_OBJECTS];
-        pinY = new double[MAX_OBJECTS];
-        objects = 0;
+        x = new DoubleList(MAX_OBJECTS);
+        y = new DoubleList(MAX_OBJECTS);
+        px = new DoubleList(MAX_OBJECTS);
+        py = new DoubleList(MAX_OBJECTS);
+
+        r = new DoubleList(MAX_OBJECTS);
+        pinX = new DoubleList(MAX_OBJECTS);
+        pinY = new DoubleList(MAX_OBJECTS);
 
         constraintA = new int[MAX_CONSTRAINTS];
         constraintB = new int[MAX_CONSTRAINTS];
@@ -54,7 +53,7 @@ public class World {
     }
 
     public void reset() {
-        objects = 0;
+        x.clear();
         constraints = 0;
         floor = 0;
     }
@@ -64,41 +63,46 @@ public class World {
         pin(id);
     }
 
-    public int addObject(double x, double y, double radius) {
-        if (objects < MAX_OBJECTS) {
-            int id = objects;
-            initialiseObject(id, x, y, radius);
-            objects++;
+    public int addObject(double posX, double posY, double radius) {
+        int id = x.add(0);
+        y.add(0);
+        px.add(0);
+        py.add(0);
+        r.add(0);
+        pinX.add(0);
+        pinY.add(0);
 
+        if (id != -1) {
+            initialiseObject(id, posX, posY, radius);
             return id;
         } else
             return -1;
     }
 
     private void initialiseObject(int i, double posx, double posy, double radius) {
-        x[i] = posx;
-        y[i] = posy;
-        r[i] = radius;
+        x.set(i, posx);
+        y.set(i, posy);
+        r.set(i, radius);
 
-        px[i] = posx;
-        py[i] = posy;
+        px.set(i, posx);
+        py.set(i, posy);
 
-        pinX[i] = Double.MAX_VALUE;
-        pinY[i] = Double.MAX_VALUE;
+        pinX.set(i, Double.MAX_VALUE);
+        pinY.set(i, Double.MAX_VALUE);
     }
 
     public void pin(int i) {
-        pinX[i] = x[i];
-        pinY[i] = y[i];
+        pinX.set(i, x.get(i));
+        pinY.set(i, y.get(i));
     }
 
     public void unpin(int i) {
-        pinX[i] = Double.MAX_VALUE;
-        pinY[i] = Double.MAX_VALUE;
+        pinX.set(i, Double.MAX_VALUE);
+        pinY.set(i, Double.MAX_VALUE);
     }
 
     public boolean isPinned(int i) {
-        return pinX[i] != Double.MAX_VALUE;
+        return pinX.get(i) != Double.MAX_VALUE;
     }
 
     public void addConstraint(int a, int b, double strength) {
@@ -107,7 +111,7 @@ public class World {
 
             constraintA[id] = a;
             constraintB[id] = b;
-            constraintDistance[id] = Math.hypot(x[a] - x[b], y[a] - y[b]);
+            constraintDistance[id] = Math.hypot(x.get(a) - x.get(b), y.get(a) - y.get(b));
             constraintStrength[id] = strength;
 
             constraints++;
@@ -128,13 +132,13 @@ public class World {
     private void solveConstraints() {
         solveDistanceConstraints();
 
-        for (int i = 0; i < objects; i++) {
+        for (int i = 0; i < x.size(); i++) {
             solveWallAndFloor(i);
             solveCollisions(i);
 
             if (isPinned(i)) {
-                x[i] = pinX[i];
-                y[i] = pinY[i];
+                x.set(i, pinX.get(i));
+                y.set(i, pinY.get(i));
             }
         }
     }
@@ -146,10 +150,10 @@ public class World {
             double restingDistance = constraintDistance[i];
             double strength = constraintStrength[i];
 
-            double xA = x[a];
-            double yA = y[a];
-            double xB = x[b];
-            double yB = y[b];
+            double xA = x.get(a);
+            double yA = y.get(a);
+            double xB = x.get(b);
+            double yB = y.get(b);
 
             double diffX = xA - xB;
             double diffY = yA - yB;
@@ -161,32 +165,32 @@ public class World {
             else
                 difference = (restingDistance - actualDistance) / actualDistance;
 
-            x[a] += diffX * 0.5 * difference;
-            y[a] += diffY * 0.5 * difference;
-            x[b] -= diffX * 0.5 * difference;
-            y[b] -= diffY * 0.5 * difference;
+            x.set(a, x.get(a) + diffX * 0.5 * difference);
+            y.set(a, y.get(a) + diffY * 0.5 * difference);
+            x.set(b, x.get(b) - diffX * 0.5 * difference);
+            y.set(b, y.get(b) - diffY * 0.5 * difference);
         }
     }
 
 
     private void solveWallAndFloor(int i) {
-        if (!deleteAtFloor && y[i] - r[i] < floor) {
-            y[i] = floor + r[i];
-            py[i] = py[i] + (y[i] - py[i]) * 2;
+        if (!deleteAtFloor && y.get(i) - r.get(i) < floor) {
+            y.set(i, floor + r.get(i));
+            py.set(i, py.get(i) + (y.get(i) - py.get(i)) * 2);
 
-            px[i] = x[i] - (x[i] - px[i]) * 0.97;
+            px.set(i, x.get(i) - (x.get(i) - px.get(i)) * 0.97);
         }
     }
 
     private void solveCollisions(int i) {
-        double x1 = x[i];
-        double y1 = y[i];
+        double x1 = x.get(i);
+        double y1 = y.get(i);
 
-        for (int j = i + 1; j < objects; j++) {
-            double x2 = x[j];
-            double y2 = y[j];
+        for (int j = i + 1; j < x.size(); j++) {
+            double x2 = x.get(j);
+            double y2 = y.get(j);
 
-            double rBoth = r[i] + r[j];
+            double rBoth = r.get(i) + r.get(j);
 
             if (Math.abs(x1 - x2) > rBoth)
                 continue;
@@ -210,10 +214,10 @@ public class World {
                     normalY = 0;
                 }
 
-                x[i] += penetration * normalX * 0.5 * 0.99;
-                y[i] += penetration * normalY * 0.5 * 0.99;
-                x[j] -= penetration * normalX * 0.5 * 0.99;
-                y[j] -= penetration * normalY * 0.5 * 0.99;
+                x.set(i, x.get(i) + penetration * normalX * 0.5 * 0.99);
+                y.set(i, y.get(i) + penetration * normalY * 0.5 * 0.99);
+                x.set(j, x.get(j) - penetration * normalX * 0.5 * 0.99);
+                y.set(j, y.get(j) - penetration * normalY * 0.5 * 0.99);
             }
         }
     }
@@ -221,8 +225,8 @@ public class World {
     private void delete() {
         if (!deleteAtFloor)
             return;
-        for (int i = 0; i < objects;) {
-            if (y[i] - r[i] < floor) {
+        for (int i = 0; i < x.size();) {
+            if (y.get(i) - r.get(i) < floor) {
                 deleteObject(i);
             } else {
                 i++;
@@ -245,42 +249,42 @@ public class World {
     }
 
     private void integrate(double timestep) {
-        for (int i = 0; i < objects; i++) {
+        for (int i = 0; i < x.size(); i++) {
             if (isPinned(i))
                 continue;
 
-            double vx = x[i] - px[i];
-            double vy = y[i] - py[i];
+            double vx = x.get(i) - px.get(i);
+            double vy = y.get(i) - py.get(i);
 
             double ax = -vx * 5;
             double ay = gravity + -vy * 5;
 
-            double nx = x[i] + vx + ax * timestep * timestep;
-            double ny = y[i] + vy + ay * timestep * timestep;
+            double nx = x.get(i) + vx + ax * timestep * timestep;
+            double ny = y.get(i) + vy + ay * timestep * timestep;
 
-            px[i] = x[i];
-            py[i] = y[i];
+            px.set(i, x.get(i));
+            py.set(i, y.get(i));
 
-            x[i] = nx;
-            y[i] = ny;
+            x.set(i, nx);
+            y.set(i, ny);
         }
     }
 
 
     public double getX(int i) {
-        return x[i];
+        return x.get(i);
     }
 
     public double getY(int i) {
-        return y[i];
+        return y.get(i);
     }
 
     public double getWidth(int i) {
-        return r[i] * 2;
+        return r.get(i) * 2;
     }
 
     public double getHeight(int i) {
-        return r[i] * 2;
+        return r.get(i) * 2;
     }
 
     public int getConstraintA(int i) {
@@ -292,7 +296,7 @@ public class World {
     }
 
     public int getObjects() {
-        return objects;
+        return x.size();
     }
 
     public int getConstraints() {
@@ -304,8 +308,8 @@ public class World {
     }
 
     public void setVelocity(int i, double vx, double vy) {
-        px[i] = x[i] - vx / 60;
-        py[i] = y[i] - vy / 60;
+        px.set(i, x.get(i) - vx / 60);
+        py.set(i, y.get(i) - vy / 60);
     }
 
     public boolean isEWO() {
@@ -346,13 +350,13 @@ public class World {
 
 
     public void deleteObject(int i) {
-        deleteFromArray(i, objects, x);
-        deleteFromArray(i, objects, y);
-        deleteFromArray(i, objects, px);
-        deleteFromArray(i, objects, py);
-        deleteFromArray(i, objects, r);
-        deleteFromArray(i, objects, pinX);
-        deleteFromArray(i, objects, pinY);
+        x.delete(i);
+        y.delete(i);
+        px.delete(i);
+        py.delete(i);
+        r.delete(i);
+        pinX.delete(i);
+        pinY.delete(i);
 
         for (int j = 0; j < constraints;) {
             if (constraintA[j] == i || constraintB[j] == i)
@@ -361,12 +365,10 @@ public class World {
                 j++;
         }
 
-        objects--;
-
         for (int j = 0; j < constraints; j++) {
-            if (constraintA[j] == objects)
+            if (constraintA[j] == x.size())
                 constraintA[j] = i;
-            else if (constraintB[j] == objects)
+            else if (constraintB[j] == x.size())
                 constraintB[j] = i;
         }
     }
