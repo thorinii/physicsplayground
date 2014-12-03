@@ -18,9 +18,8 @@ public class World {
     private final DoubleList r;
     private final DoubleList pinX, pinY;
 
-    private final int[] constraintA, constraintB;
-    private final double[] constraintDistance, constraintStrength;
-    private int constraints;
+    private final IntList constraintA, constraintB;
+    private final DoubleList constraintDistance, constraintStrength;
 
     private boolean ewo;
     private boolean deleteAtFloor;
@@ -41,11 +40,10 @@ public class World {
         pinX = new DoubleList(MAX_OBJECTS);
         pinY = new DoubleList(MAX_OBJECTS);
 
-        constraintA = new int[MAX_CONSTRAINTS];
-        constraintB = new int[MAX_CONSTRAINTS];
-        constraintDistance = new double[MAX_CONSTRAINTS];
-        constraintStrength = new double[MAX_CONSTRAINTS];
-        constraints = 0;
+        constraintA = new IntList(MAX_CONSTRAINTS);
+        constraintB = new IntList(MAX_CONSTRAINTS);
+        constraintDistance = new DoubleList(MAX_CONSTRAINTS);
+        constraintStrength = new DoubleList(MAX_CONSTRAINTS);
 
         ewo = false;
 
@@ -54,7 +52,18 @@ public class World {
 
     public void reset() {
         x.clear();
-        constraints = 0;
+        y.clear();
+        px.clear();
+        py.clear();
+        r.clear();
+        pinX.clear();
+        pinY.clear();
+
+        constraintA.clear();
+        constraintB.clear();
+        constraintDistance.clear();
+        constraintStrength.clear();
+
         floor = 0;
     }
 
@@ -106,15 +115,12 @@ public class World {
     }
 
     public void addConstraint(int a, int b, double strength) {
-        if (constraints < MAX_CONSTRAINTS) {
-            int id = constraints;
+        int id = constraintA.add(a);
 
-            constraintA[id] = a;
-            constraintB[id] = b;
-            constraintDistance[id] = Math.hypot(x.get(a) - x.get(b), y.get(a) - y.get(b));
-            constraintStrength[id] = strength;
-
-            constraints++;
+        if (id != -1) {
+            constraintB.add(b);
+            constraintDistance.add(Math.hypot(x.get(a) - x.get(b), y.get(a) - y.get(b)));
+            constraintStrength.add(strength);
         }
     }
 
@@ -144,11 +150,11 @@ public class World {
     }
 
     private void solveDistanceConstraints() {
-        for (int i = 0; i < constraints; i++) {
-            int a = constraintA[i];
-            int b = constraintB[i];
-            double restingDistance = constraintDistance[i];
-            double strength = constraintStrength[i];
+        for (int i = 0; i < constraintA.size(); i++) {
+            int a = constraintA.get(i);
+            int b = constraintB.get(i);
+            double restingDistance = constraintDistance.get(i);
+            double strength = constraintStrength.get(i);
 
             double xA = x.get(a);
             double yA = y.get(a);
@@ -288,11 +294,11 @@ public class World {
     }
 
     public int getConstraintA(int i) {
-        return constraintA[i];
+        return constraintA.get(i);
     }
 
     public int getConstraintB(int i) {
-        return constraintB[i];
+        return constraintB.get(i);
     }
 
     public int getObjects() {
@@ -300,7 +306,7 @@ public class World {
     }
 
     public int getConstraints() {
-        return constraints;
+        return constraintA.size();
     }
 
     public double getFloor() {
@@ -358,35 +364,25 @@ public class World {
         pinX.delete(i);
         pinY.delete(i);
 
-        for (int j = 0; j < constraints;) {
-            if (constraintA[j] == i || constraintB[j] == i)
+        for (int j = 0; j < constraintA.size();) {
+            if (constraintA.get(j) == i || constraintB.get(j) == i)
                 deleteConstraint(j);
             else
                 j++;
         }
 
-        for (int j = 0; j < constraints; j++) {
-            if (constraintA[j] == x.size())
-                constraintA[j] = i;
-            else if (constraintB[j] == x.size())
-                constraintB[j] = i;
+        for (int j = 0; j < constraintA.size(); j++) {
+            if (constraintA.get(j) == x.size())
+                constraintA.set(j, i);
+            else if (constraintB.get(j) == x.size())
+                constraintB.set(j, i);
         }
     }
 
     public void deleteConstraint(int i) {
-        deleteFromArray(i, constraints, constraintA);
-        deleteFromArray(i, constraints, constraintB);
-        deleteFromArray(i, constraints, constraintDistance);
-        deleteFromArray(i, constraints, constraintStrength);
-
-        constraints--;
-    }
-
-    private void deleteFromArray(int i, int last, double[] array) {
-        array[i] = array[last - 1];
-    }
-
-    private void deleteFromArray(int i, int last, int[] array) {
-        array[i] = array[last - 1];
+        constraintA.delete(i);
+        constraintB.delete(i);
+        constraintDistance.delete(i);
+        constraintStrength.delete(i);
     }
 }
