@@ -126,104 +126,8 @@ public class World {
 
 
     public void update(double timestep) {
-        for (int i = 0; i < numberOfConstraintSolves; i++)
-            solveConstraints();
-
         delete();
         processInflow();
-    }
-
-    private void solveConstraints() {
-        solveDistanceConstraints();
-
-        for (int i = 0; i < x.size(); i++) {
-            solveWallAndFloor(i);
-            solveCollisions(i);
-
-            if (isPinned(i)) {
-                x.set(i, pinX.get(i));
-                y.set(i, pinY.get(i));
-            }
-        }
-    }
-
-    private void solveDistanceConstraints() {
-        for (int i = 0; i < constraintA.size(); i++) {
-            int a = constraintA.get(i);
-            int b = constraintB.get(i);
-            double restingDistance = constraintDistance.get(i);
-            double strength = constraintStrength.get(i);
-
-            double xA = x.get(a);
-            double yA = y.get(a);
-            double xB = x.get(b);
-            double yB = y.get(b);
-
-            double diffX = xA - xB;
-            double diffY = yA - yB;
-            double actualDistance = Math.sqrt(diffX * diffX + diffY * diffY);
-
-            double difference;
-            if (actualDistance == 0)
-                difference = 1;
-            else
-                difference = (restingDistance - actualDistance) / actualDistance;
-
-            x.set(a, x.get(a) + diffX * 0.5 * difference);
-            y.set(a, y.get(a) + diffY * 0.5 * difference);
-            x.set(b, x.get(b) - diffX * 0.5 * difference);
-            y.set(b, y.get(b) - diffY * 0.5 * difference);
-        }
-    }
-
-
-    private void solveWallAndFloor(int i) {
-        if (!deleteAtFloor && y.get(i) - r.get(i) < floor) {
-            y.set(i, floor + r.get(i));
-            py.set(i, py.get(i) + (y.get(i) - py.get(i)) * 2);
-
-            px.set(i, x.get(i) - (x.get(i) - px.get(i)) * 0.97);
-        }
-    }
-
-    private void solveCollisions(int i) {
-        double x1 = x.get(i);
-        double y1 = y.get(i);
-
-        for (int j = i + 1; j < x.size(); j++) {
-            double x2 = x.get(j);
-            double y2 = y.get(j);
-
-            double rBoth = r.get(i) + r.get(j);
-
-            if (Math.abs(x1 - x2) > rBoth)
-                continue;
-            if (Math.abs(y1 - y2) > rBoth)
-                continue;
-
-            double rBothSq = rBoth * rBoth;
-            double distSq = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
-
-            if (distSq < rBothSq) {
-                double dist = Math.sqrt(distSq);
-                double penetration = rBoth - dist;
-                double normalX;
-                double normalY;
-
-                if (dist > 0) {
-                    normalX = (x1 - x2) / dist;
-                    normalY = (y1 - y2) / dist;
-                } else {
-                    normalX = 1;
-                    normalY = 0;
-                }
-
-                x.set(i, x.get(i) + penetration * normalX * 0.5 * 0.99);
-                y.set(i, y.get(i) + penetration * normalY * 0.5 * 0.99);
-                x.set(j, x.get(j) - penetration * normalX * 0.5 * 0.99);
-                y.set(j, y.get(j) - penetration * normalY * 0.5 * 0.99);
-            }
-        }
     }
 
     private void delete() {
@@ -269,6 +173,12 @@ public class World {
         return store;
     }
 
+    public Vector2 getPin(int i, Vector2 store) {
+        store.x = pinX.get(i);
+        store.y = pinY.get(i);
+        return store;
+    }
+
 
     public void setPosition(int i, Vector2 value) {
         x.set(i, value.x);
@@ -288,6 +198,10 @@ public class World {
         return y.get(i);
     }
 
+    public double getRadius(int i) {
+        return r.get(i);
+    }
+
     public double getWidth(int i) {
         return r.get(i) * 2;
     }
@@ -296,12 +210,25 @@ public class World {
         return r.get(i) * 2;
     }
 
+    public void setY(int i, double value) {
+        y.set(i, value);
+    }
+
+
     public int getConstraintA(int i) {
         return constraintA.get(i);
     }
 
     public int getConstraintB(int i) {
         return constraintB.get(i);
+    }
+
+    public double getConstraintRestingDistance(int i) {
+        return constraintDistance.get(i);
+    }
+
+    public double getConstraintStrength(int i) {
+        return constraintStrength.get(i);
     }
 
     public int getObjects() {

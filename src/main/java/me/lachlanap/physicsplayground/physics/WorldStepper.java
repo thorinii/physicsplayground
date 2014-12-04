@@ -18,10 +18,10 @@ public class WorldStepper {
     }
 
     public void step(double timestep, int numberOfConstraintSolves) {
-        /*for (int i = 0; i < numberOfConstraintSolves; i++)
-         constraintSolver.solve(world);
+        for (int i = 0; i < numberOfConstraintSolves; i++)
+            constraintSolver.solve(world);
 
-         delete();
+        /* delete();
          processInflow();*/
         world.update(timestep);
 

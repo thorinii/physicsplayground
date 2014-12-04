@@ -16,9 +16,23 @@ public class Vector2 {
     public Vector2() {
     }
 
+
     public Vector2 minus(Vector2 b, Vector2 store) {
         store.x = x - b.x;
         store.y = y - b.y;
+        return store;
+    }
+
+    public Vector2 minus(Vector2 b) {
+        x = x - b.x;
+        y = y - b.y;
+        return this;
+    }
+
+
+    public Vector2 plus(Vector2 b, Vector2 store) {
+        store.x = x + b.x;
+        store.y = y + b.y;
         return store;
     }
 
@@ -33,6 +47,7 @@ public class Vector2 {
         y = y + by;
         return this;
     }
+
 
     public Vector2 mul(double v) {
         x = x * v;
@@ -50,6 +65,14 @@ public class Vector2 {
         x = -x;
         y = -y;
         return this;
+    }
+
+    public double length() {
+        return Math.hypot(x, y);
+    }
+
+    public double lengthSq() {
+        return x * x + y * y;
     }
 
     @Override
