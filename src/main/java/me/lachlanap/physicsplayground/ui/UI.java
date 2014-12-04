@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import me.lachlanap.physicsplayground.physics.World;
+import me.lachlanap.physicsplayground.physics.WorldStepper;
 
 /**
  *
@@ -25,7 +26,7 @@ public class UI {
         this.world = world;
 
         this.worldRenderer = new WorldRenderer(world);
-        this.worldAdvancer = new WorldAdvancer(world, worldRenderer);
+        this.worldAdvancer = new WorldAdvancer(world, new WorldStepper(world), worldRenderer);
         this.optionsPanel = new OptionsPanel(world, worldAdvancer, worldRenderer);
 
         this.frame = new JFrame("Physics Playground");

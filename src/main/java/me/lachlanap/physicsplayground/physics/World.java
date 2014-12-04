@@ -131,8 +131,6 @@ public class World {
 
         delete();
         processInflow();
-
-        integrate(timestep);
     }
 
     private void solveConstraints() {
@@ -254,28 +252,33 @@ public class World {
         }
     }
 
-    private void integrate(double timestep) {
-        for (int i = 0; i < x.size(); i++) {
-            if (isPinned(i))
-                continue;
-
-            double vx = x.get(i) - px.get(i);
-            double vy = y.get(i) - py.get(i);
-
-            double ax = -vx * 5;
-            double ay = gravity + -vy * 5;
-
-            double nx = x.get(i) + vx + ax * timestep * timestep;
-            double ny = y.get(i) + vy + ay * timestep * timestep;
-
-            px.set(i, x.get(i));
-            py.set(i, y.get(i));
-
-            x.set(i, nx);
-            y.set(i, ny);
-        }
+    public double getGravity() {
+        return gravity;
     }
 
+
+    public Vector2 getPosition(int i, Vector2 store) {
+        store.x = x.get(i);
+        store.y = y.get(i);
+        return store;
+    }
+
+    public Vector2 getPrevious(int i, Vector2 store) {
+        store.x = px.get(i);
+        store.y = py.get(i);
+        return store;
+    }
+
+
+    public void setPosition(int i, Vector2 value) {
+        x.set(i, value.x);
+        y.set(i, value.y);
+    }
+
+    public void setPrevious(int i, Vector2 value) {
+        px.set(i, value.x);
+        py.set(i, value.y);
+    }
 
     public double getX(int i) {
         return x.get(i);

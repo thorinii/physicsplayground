@@ -1,6 +1,7 @@
 package me.lachlanap.physicsplayground.ui;
 
 import me.lachlanap.physicsplayground.physics.World;
+import me.lachlanap.physicsplayground.physics.WorldStepper;
 
 /**
  *
@@ -11,14 +12,16 @@ class WorldAdvancer {
     private static final double DEFAULT_TIMESTEP = 1 / 60.0;
 
     private final World world;
+    private final WorldStepper stepper;
     private final WorldRenderer renderer;
     private final Thread thread;
 
     private double timestep;
     private volatile boolean active;
 
-    public WorldAdvancer(World world, WorldRenderer renderer) {
+    public WorldAdvancer(World world, WorldStepper stepper, WorldRenderer renderer) {
         this.world = world;
+        this.stepper = stepper;
         this.renderer = renderer;
 
         this.thread = new Thread(new AdvancerTask());
@@ -90,7 +93,7 @@ class WorldAdvancer {
             }
 
             if (timeToUse > timestep) {
-                world.update(timestep);
+                stepper.step(timestep, 3);
                 timeToUse -= timestep;
 
                 lastPhysicsUpdate = now;
