@@ -21,10 +21,36 @@ public class WorldStepper {
         for (int i = 0; i < numberOfConstraintSolves; i++)
             constraintSolver.solve(world);
 
-        /* delete();
-         processInflow();*/
-        world.update(timestep);
+        delete();
+        processInflow();
 
         integrator.integrate(world, timestep);
+    }
+
+
+    private void delete() {
+        if (!world.isDeleteAtFloor())
+            return;
+        for (int i = 0; i < world.getObjects();) {
+            if (world.getY(i) - world.getRadius(i) < world.getFloor()) {
+                world.deleteObject(i);
+            } else {
+                i++;
+            }
+        }
+    }
+
+    private void processInflow() {
+        if (!world.isInflowEnabled())
+            return;
+
+        double radius = .1;
+
+        for (int i = 0; i < 5; i++) {
+            double x = world.getInflowX() + (Math.random() * radius * 2 - radius) * 2;
+            double y = world.getInflowY() + (Math.random() * radius * 2 - radius) * 2;
+
+            world.addObject(x, y, radius);
+        }
     }
 }

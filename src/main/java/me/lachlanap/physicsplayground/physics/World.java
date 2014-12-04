@@ -9,8 +9,7 @@ public class World {
     private static final int MAX_OBJECTS = 1024 * 8;
     private static final int MAX_CONSTRAINTS = MAX_OBJECTS * 2;
 
-    private int numberOfConstraintSolves;
-    private double gravity;
+    private final double gravity;
 
     private double floor;
 
@@ -28,7 +27,6 @@ public class World {
     private boolean inflowEnabled;
 
     public World() {
-        numberOfConstraintSolves = 3;
         gravity = -9.81;
 
         x = new DoubleList(MAX_OBJECTS);
@@ -121,38 +119,6 @@ public class World {
             constraintB.add(b);
             constraintDistance.add(Math.hypot(x.get(a) - x.get(b), y.get(a) - y.get(b)));
             constraintStrength.add(strength);
-        }
-    }
-
-
-    public void update(double timestep) {
-        delete();
-        processInflow();
-    }
-
-    private void delete() {
-        if (!deleteAtFloor)
-            return;
-        for (int i = 0; i < x.size();) {
-            if (y.get(i) - r.get(i) < floor) {
-                deleteObject(i);
-            } else {
-                i++;
-            }
-        }
-    }
-
-    private void processInflow() {
-        if (!inflowEnabled)
-            return;
-
-        double radius = 5;
-
-        for (int i = 0; i < 2; i++) {
-            double x = inflowX + (Math.random() * radius * 2 - radius);
-            double y = inflowY + (Math.random() * radius * 2 - radius);
-
-            addObject(x, y, 1);
         }
     }
 
@@ -266,6 +232,10 @@ public class World {
 
     public void setInflowEnabled(boolean inflowEnabled) {
         this.inflowEnabled = inflowEnabled;
+    }
+
+    public boolean isInflowEnabled() {
+        return inflowEnabled;
     }
 
     public void setInflow(double x, double y) {

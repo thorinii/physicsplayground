@@ -11,7 +11,7 @@ public class CollisionConstraintSolver {
 
         for (int i = 0; i < world.getObjects(); i++) {
             solveWallAndFloor(world, i);
-            //solveCollisions(world, i);
+            solveCollisions(world, i);
 
             if (world.isPinned(i)) {
                 world.setPosition(i, world.getPin(i, pin));
