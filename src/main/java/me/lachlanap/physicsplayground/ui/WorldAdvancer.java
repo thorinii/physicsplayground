@@ -93,7 +93,7 @@ class WorldAdvancer {
             }
 
             if (timeToUse > timestep) {
-                stepper.step(timestep, 3);
+                stepper.step(timestep, 3, renderer.getTimer());
                 timeToUse -= timestep;
 
                 lastPhysicsUpdate = now;

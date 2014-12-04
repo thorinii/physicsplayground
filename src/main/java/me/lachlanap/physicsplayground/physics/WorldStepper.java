@@ -17,14 +17,14 @@ public class WorldStepper {
         this.constraintSolver = new ConstraintSolver();
     }
 
-    public void step(double timestep, int numberOfConstraintSolves) {
+    public void step(double timestep, int numberOfConstraintSolves, Timer timer) {
         for (int i = 0; i < numberOfConstraintSolves; i++)
-            constraintSolver.solve(world);
+            constraintSolver.solve(world, timer);
 
         delete();
         processInflow();
 
-        integrator.integrate(world, timestep);
+        integrator.integrate(world, timestep, timer);
     }
 
 

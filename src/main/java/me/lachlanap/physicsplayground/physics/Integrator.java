@@ -6,7 +6,15 @@ package me.lachlanap.physicsplayground.physics;
  */
 public class Integrator {
 
-    public void integrate(World world, double timestep) {
+    public void integrate(World world, double timestep, Timer timer) {
+        long start = System.nanoTime();
+
+        verletIntegration(world, timestep);
+
+        timer.computeTime("Integration", start);
+    }
+
+    private void verletIntegration(World world, double timestep) {
         Vector2 position = new Vector2();
         Vector2 previous = new Vector2();
         Vector2 next = new Vector2();

@@ -34,7 +34,8 @@ public class UI {
     }
 
     private void setup() {
-        frame.setSize(800, 700);
+        //frame.setSize(800, 700);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setLayout(new BorderLayout(5, 5));

@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelEvent;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import me.lachlanap.physicsplayground.physics.Timer;
 import me.lachlanap.physicsplayground.physics.World;
 import me.lachlanap.physicsplayground.ui.tools.AddCircleTool;
 import me.lachlanap.physicsplayground.ui.tools.Tool;
@@ -22,6 +23,7 @@ class WorldRenderer extends JComponent {
 
     private final World world;
     private final View view;
+    private final Timer timer;
 
     private int renderFps;
     private int physicsFps;
@@ -31,6 +33,7 @@ class WorldRenderer extends JComponent {
     public WorldRenderer(World world) {
         this.world = world;
         this.view = new View();
+        this.timer = new Timer();
 
         ViewPanningMouseListener vpml = new ViewPanningMouseListener();
         addMouseListener(vpml);
@@ -41,6 +44,11 @@ class WorldRenderer extends JComponent {
 
         tool = new AddCircleTool(world, 0.5);
     }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
 
     public void setTool(Tool tool) {
         this.tool = tool;
@@ -154,9 +162,10 @@ class WorldRenderer extends JComponent {
 
     private void drawDiagnostics(Graphics2D g) {
         g.setColor(Color.BLACK);
-        g.fillRect(0, getHeight() - 10 - 15 * 6, 300, getHeight());
+        g.fillRect(0, getHeight() - 10 - 15 * 7, 300, getHeight());
 
         g.setColor(Color.GREEN);
+        g.drawString("Times: " + timer.toString(), 10, getHeight() - 10 - 15 * 6);
         g.drawString("Tool: " + tool.getLabel(), 10, getHeight() - 10 - 15 * 5);
         g.drawString("EWO: " + (world.isEWO() ? "On" : "Off"), 10, getHeight() - 10 - 15 * 4);
         g.drawString("Objects: " + world.getObjects(), 10, getHeight() - 10 - 15 * 3);

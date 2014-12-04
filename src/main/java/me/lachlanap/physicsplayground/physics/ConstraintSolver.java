@@ -14,9 +14,15 @@ public class ConstraintSolver {
         this.collisionSolver = new CollisionConstraintSolver();
     }
 
-    public void solve(World world) {
+    public void solve(World world, Timer t) {
+        long start = System.nanoTime();
+
         distanceSolver.solveDistanceConstraints(world);
+        t.computeTime("Distance Constraints", start);
+
+        start = System.nanoTime();
         collisionSolver.solveObjectConstraints(world);
+        t.computeTime("Object Constraints", start);
     }
 
 }
