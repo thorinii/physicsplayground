@@ -6,7 +6,7 @@ package me.lachlanap.physicsplayground.physics;
  */
 public class World {
 
-    private static final int MAX_OBJECTS = 1024 * 8;
+    private static final int MAX_OBJECTS = 1024 * 32;
     private static final int MAX_CONSTRAINTS = MAX_OBJECTS * 2;
 
     private final double gravity;

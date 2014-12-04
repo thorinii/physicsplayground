@@ -201,6 +201,8 @@ class WorldRenderer extends JComponent {
             } else if (e.getButton() == MouseEvent.BUTTON3) {
                 world.reset();
             }
+
+            repaint();
         }
 
         @Override
@@ -216,6 +218,8 @@ class WorldRenderer extends JComponent {
 
                 tool.mouseUp(x, y);
             }
+
+            repaint();
         }
 
         @Override
@@ -234,6 +238,8 @@ class WorldRenderer extends JComponent {
 
                 tool.mouseDrag(x, y);
             }
+
+            repaint();
         }
 
         @Override
@@ -253,6 +259,8 @@ class WorldRenderer extends JComponent {
             ox = view.relativeToView(ox) + base.x;
             oy = view.relativeToView(oy) + base.y;
             view.setPixelOffset(ox, oy);
+
+            repaint();
         }
     }
 }

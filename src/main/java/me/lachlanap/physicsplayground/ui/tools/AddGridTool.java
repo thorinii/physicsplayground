@@ -58,6 +58,7 @@ public class AddGridTool implements Tool {
                 return;
 
             int[][] objectIds = new int[widthN][heightN];
+            int lastId = -1;
 
             // Create the objects
             for (int x = 0; x < widthN; x++) {
@@ -68,9 +69,14 @@ public class AddGridTool implements Tool {
                     if (y % 2 == 1)
                         posX -= radius;
 
-                    objectIds[x][y] = world.addObject(posX, posY,
-                                                      radius * 0.95);
+                    lastId = world.addObject(posX, posY, radius * 0.95);
+                    objectIds[x][y] = lastId;
+                    if (lastId == -1)
+                        break;
                 }
+
+                if (lastId == -1)
+                    break;
             }
 
             // Constrain on x axis
@@ -78,6 +84,9 @@ public class AddGridTool implements Tool {
                 for (int y = 0; y < heightN; y++) {
                     int a = objectIds[x][y];
                     int b = objectIds[x + 1][y];
+
+                    if (a == -1 || b == -1)
+                        continue;
 
                     world.addConstraint(a, b, 0);
                 }
@@ -89,6 +98,9 @@ public class AddGridTool implements Tool {
                     int a = objectIds[x][y];
                     int b = objectIds[x][y + 1];
 
+                    if (a == -1 || b == -1)
+                        continue;
+
                     world.addConstraint(a, b, 0);
                 }
             }
@@ -99,6 +111,9 @@ public class AddGridTool implements Tool {
                     int a = objectIds[x][y];
                     int b = objectIds[x + 1][y + 1];
 
+                    if (a == -1 || b == -1)
+                        continue;
+
                     world.addConstraint(a, b, 0);
                 }
             }
@@ -108,6 +123,9 @@ public class AddGridTool implements Tool {
                 for (int y = 1; y < heightN - 1; y += 2) {
                     int a = objectIds[x][y];
                     int b = objectIds[x - 1][y + 1];
+
+                    if (a == -1 || b == -1)
+                        continue;
 
                     world.addConstraint(a, b, 0);
                 }
