@@ -7,20 +7,20 @@ package me.lachlanap.physicsplayground.physics;
 public class DistanceConstraintSolver {
 
     public void solveDistanceConstraints(World world) {
-        Vector2 aPos = new Vector2();
-        Vector2 bPos = new Vector2();
+        PointObject a = new PointObject();
+        PointObject b = new PointObject();
         Vector2 difference = new Vector2();
 
         for (int i = 0; i < world.getConstraints(); i++) {
-            int a = world.getConstraintA(i);
-            int b = world.getConstraintB(i);
+            int aid = world.getConstraintA(i);
+            int bid = world.getConstraintB(i);
+
             double restingDistance = world.getConstraintRestingDistance(i);
             double strength = world.getConstraintStrength(i);
+            world.getObject(aid, a);
+            world.getObject(bid, b);
 
-            world.getPosition(a, aPos);
-            world.getPosition(b, bPos);
-
-            aPos.minus(bPos, difference);
+            a.pos.minus(b.pos, difference);
             double actualDistance = difference.length();
 
             double error;
@@ -30,8 +30,11 @@ public class DistanceConstraintSolver {
                 error = (restingDistance - actualDistance) / actualDistance;
 
             difference.mul(0.5 * error);
-            world.setPosition(a, aPos.plus(difference));
-            world.setPosition(b, bPos.minus(difference));
+            a.pos.plus(difference);
+            b.pos.minus(difference);
+
+            world.updateObject(a);
+            world.updateObject(b);
         }
     }
 

@@ -6,6 +6,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import me.lachlanap.physicsplayground.physics.PointObject;
 import me.lachlanap.physicsplayground.physics.World;
 import me.lachlanap.physicsplayground.ui.tools.*;
 
@@ -73,8 +74,10 @@ class OptionsPanel extends JPanel {
 
         @Override
         public void run() {
-            for (int i = 0; i < world.getObjects(); i++)
-                world.setVelocity(i, 0, 0);
+            PointObject o = new PointObject();
+            for (int i = 0; i < world.getObjects(); i++) {
+                world.updateObject(world.getObject(i, o).setVelocity(0, 0));
+            }
         }
     }
 

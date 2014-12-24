@@ -7,12 +7,25 @@ package me.lachlanap.physicsplayground.physics;
 public class PointObject {
 
     public int id;
-    public double x, y;
-    public double px, py;
+    public final Vector2 pos = new Vector2();
+    public final Vector2 prev = new Vector2();
     public double radius;
-    public double pinX, pinY;
+    public final Vector2 pin = new Vector2();
 
     public boolean isPinned() {
-        return pinX != Double.MAX_VALUE;
+        return pin.x != Double.MAX_VALUE;
+    }
+
+    public Vector2 getVelocity(Vector2 store) {
+        return pos.minus(prev, store);
+    }
+
+    /**
+     * Sets the velocity per timestep (NOT per second).
+     */
+    public PointObject setVelocity(double vx, double vy) {
+        prev.x = pos.x - vx;
+        prev.y = pos.y - vy;
+        return this;
     }
 }

@@ -108,10 +108,6 @@ public class World {
         pinY.set(i, Double.MAX_VALUE);
     }
 
-    public boolean isPinned(int i) {
-        return pinX.get(i) != Double.MAX_VALUE;
-    }
-
     public void addConstraint(int a, int b, double strength) {
         int id = constraintA.add(a);
 
@@ -128,79 +124,35 @@ public class World {
 
     public PointObject getObject(int i, PointObject store) {
         store.id = i;
-        store.x = x.get(i);
-        store.y = y.get(i);
-        store.px = px.get(i);
-        store.py = py.get(i);
+        store.pos.x = x.get(i);
+        store.pos.y = y.get(i);
+        store.prev.x = px.get(i);
+        store.prev.y = py.get(i);
         store.radius = r.get(i);
-        store.pinX = pinX.get(i);
-        store.pinY = pinY.get(i);
+        store.pin.x = pinX.get(i);
+        store.pin.y = pinY.get(i);
 
         return store;
     }
 
-    @Deprecated
-    public Vector2 getPosition(int i, Vector2 store) {
-        store.x = x.get(i);
-        store.y = y.get(i);
+    public PointObject updateObject(PointObject store) {
+        x.set(store.id, store.pos.x);
+        y.set(store.id, store.pos.y);
+        px.set(store.id, store.prev.x);
+        py.set(store.id, store.prev.y);
+        r.set(store.id, store.radius);
+        pinX.set(store.id, store.pin.x);
+        pinY.set(store.id, store.pin.y);
+
         return store;
     }
 
-    @Deprecated
-    public Vector2 getPrevious(int i, Vector2 store) {
-        store.x = px.get(i);
-        store.y = py.get(i);
-        return store;
-    }
-
-    @Deprecated
-    public Vector2 getPin(int i, Vector2 store) {
-        store.x = pinX.get(i);
-        store.y = pinY.get(i);
-        return store;
-    }
-
-
-    @Deprecated
-    public void setPosition(int i, Vector2 value) {
-        x.set(i, value.x);
-        y.set(i, value.y);
-    }
-
-    @Deprecated
-    public void setPrevious(int i, Vector2 value) {
-        px.set(i, value.x);
-        py.set(i, value.y);
-    }
-
-    @Deprecated
     public double getX(int i) {
         return x.get(i);
     }
 
-    @Deprecated
     public double getY(int i) {
         return y.get(i);
-    }
-
-    @Deprecated
-    public double getRadius(int i) {
-        return r.get(i);
-    }
-
-    @Deprecated
-    public double getWidth(int i) {
-        return r.get(i) * 2;
-    }
-
-    @Deprecated
-    public double getHeight(int i) {
-        return r.get(i) * 2;
-    }
-
-    @Deprecated
-    public void setY(int i, double value) {
-        y.set(i, value);
     }
 
 
@@ -230,11 +182,6 @@ public class World {
 
     public double getFloor() {
         return floor;
-    }
-
-    public void setVelocity(int i, double vx, double vy) {
-        px.set(i, x.get(i) - vx / 60);
-        py.set(i, y.get(i) - vy / 60);
     }
 
     public boolean isEWO() {

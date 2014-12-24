@@ -31,8 +31,12 @@ public class WorldStepper {
     private void delete() {
         if (!world.isDeleteAtFloor())
             return;
+
+        PointObject obj = new PointObject();
         for (int i = 0; i < world.getObjects();) {
-            if (world.getY(i) - world.getRadius(i) < world.getFloor()) {
+            world.getObject(i, obj);
+
+            if (obj.pos.y - obj.radius < world.getFloor()) {
                 world.deleteObject(i);
             } else {
                 i++;

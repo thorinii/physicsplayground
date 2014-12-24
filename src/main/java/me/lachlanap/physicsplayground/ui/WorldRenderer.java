@@ -114,7 +114,7 @@ class WorldRenderer extends JComponent {
         for (int i = 0; i < world.getObjects(); i++) {
             world.getObject(i, obj);
 
-            double x = obj.x, y = obj.y;
+            double x = obj.pos.x, y = obj.pos.y;
             double w = obj.radius * 2, h = obj.radius * 2;
 
             x = view.absoluteToViewX(x);

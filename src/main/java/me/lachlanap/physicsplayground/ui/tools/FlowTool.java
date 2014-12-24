@@ -2,6 +2,7 @@ package me.lachlanap.physicsplayground.ui.tools;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import me.lachlanap.physicsplayground.physics.PointObject;
 import me.lachlanap.physicsplayground.physics.World;
 import me.lachlanap.physicsplayground.ui.View;
 
@@ -31,9 +32,10 @@ public class FlowTool implements Tool {
         double dx = x - lx;
         double dy = y - ly;
 
+        PointObject o = new PointObject();
         for (int i = 0; i < world.getObjects(); i++) {
             if (Math.abs(world.getX(i) - x) < radius && Math.abs(world.getY(i) - y) < radius)
-                world.setVelocity(i, dx * 20, dy * 20);
+                world.updateObject(world.getObject(i, o).setVelocity(dx, dy));
         }
 
         lx = x;

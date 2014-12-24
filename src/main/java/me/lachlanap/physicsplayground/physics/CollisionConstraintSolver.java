@@ -23,52 +23,52 @@ public class CollisionConstraintSolver {
     }
 
     private void solveRange(World world, int start, int finish) {
-        Vector2 pin = new Vector2();
-
+        PointObject obj = new PointObject();
         for (int i = start; i < finish; i++) {
-            solveWallAndFloor(world, i);
-            solveCollisions(world, i);
+            world.getObject(i, obj);
 
-            if (world.isPinned(i)) {
-                world.setPosition(i, world.getPin(i, pin));
+            solveWallAndFloor(world, obj);
+            solveCollisions(world, obj);
+
+            if (obj.isPinned()) {
+                obj.pos.x = obj.pin.x;
+                obj.pos.y = obj.pin.y;
+                obj.prev.x = obj.pin.x;
+                obj.prev.y = obj.pin.y;
             }
+
+            world.updateObject(obj);
         }
     }
 
-    private void solveWallAndFloor(World world, int i) {
-        Vector2 pos = world.getPosition(i, new Vector2());
-        Vector2 ppos = world.getPrevious(i, new Vector2());
+    private void solveWallAndFloor(World world, PointObject obj) {
+        if (!world.isDeleteAtFloor() && obj.pos.y - obj.radius < world.getFloor()) {
+            obj.pos.y = world.getFloor() + obj.radius;
 
-        if (!world.isDeleteAtFloor() && pos.y - world.getRadius(i) < world.getFloor()) {
-            pos.y = world.getFloor() + world.getRadius(i);
-            world.setY(i, pos.y);
-
-            ppos.x = pos.x - (pos.x - ppos.x) * 0.97; // friction
-            ppos.y = ppos.y + (pos.y - ppos.y) * 2; // bounce
-            world.setPrevious(i, ppos);
+            obj.prev.x = obj.pos.x - (obj.pos.x - obj.prev.x) * 0.97; // friction
+            obj.prev.y = obj.prev.y + (obj.pos.y - obj.prev.y) * 2; // bounce
         }
     }
 
-    private void solveCollisions(World world, int i) {
-        Vector2 pos1 = world.getPosition(i, new Vector2());
-        Vector2 pos2 = new Vector2();
+    private void solveCollisions(World world, PointObject a) {
+        PointObject b = new PointObject();
         Vector2 difference = new Vector2();
 
-        for (int j = i + 1; j < world.getObjects(); j++) {
-            if (i == j)
+        for (int j = a.id + 1; j < world.getObjects(); j++) {
+            if (a.id == j)
                 continue;
 
-            world.getPosition(j, pos2);
+            world.getObject(j, b);
 
-            double rBoth = world.getRadius(i) + world.getRadius(j);
+            double rBoth = a.radius + b.radius;
 
-            if (Math.abs(pos1.x - pos2.x) > rBoth)
+            if (Math.abs(a.pos.x - b.pos.x) > rBoth)
                 continue;
-            if (Math.abs(pos1.y - pos2.y) > rBoth)
+            if (Math.abs(a.pos.y - b.pos.y) > rBoth)
                 continue;
 
             double rBothSq = rBoth * rBoth;
-            pos1.minus(pos2, difference);
+            a.pos.minus(b.pos, difference);
 
             double distSq = difference.lengthSq();
             if (distSq < rBothSq) {
@@ -88,8 +88,9 @@ public class CollisionConstraintSolver {
                 difference.x = penetration * normalX * 0.5 * 0.99;
                 difference.y = penetration * normalY * 0.5 * 0.99;
 
-                world.setPosition(i, pos1.plus(difference));
-                world.setPosition(j, pos2.minus(difference));
+                a.pos.plus(difference);
+                b.pos.minus(difference);
+                world.updateObject(b);
             }
         }
     }

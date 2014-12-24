@@ -2,6 +2,7 @@ package me.lachlanap.physicsplayground.ui.tools;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import me.lachlanap.physicsplayground.physics.PointObject;
 import me.lachlanap.physicsplayground.physics.World;
 import me.lachlanap.physicsplayground.ui.View;
 
@@ -26,8 +27,12 @@ public class ConstraintTool implements Tool {
 
     @Override
     public void mouseDown(double x, double y) {
+        PointObject obj = new PointObject();
+
         for (int i = 0; i < world.getObjects(); i++) {
-            if (Math.abs(world.getX(i) - x) < world.getWidth(i) && Math.abs(world.getY(i) - y) < world.getHeight(i)) {
+            world.getObject(i, obj);
+
+            if (Math.abs(world.getX(i) - x) < obj.radius * 2 && Math.abs(world.getY(i) - y) < obj.radius * 2) {
                 objectA = i;
                 ax = world.getX(i);
                 ay = world.getY(i);
@@ -40,11 +45,13 @@ public class ConstraintTool implements Tool {
     public void mouseDrag(double x, double y) {
         objectB = -1;
 
+        PointObject obj = new PointObject();
         for (int i = 0; i < world.getObjects(); i++) {
             if (i == objectA)
                 continue;
+            world.getObject(i, obj);
 
-            if (Math.abs(world.getX(i) - x) < world.getWidth(i) && Math.abs(world.getY(i) - y) < world.getHeight(i)) {
+            if (Math.abs(world.getX(i) - x) < obj.radius * 2 && Math.abs(world.getY(i) - y) < obj.radius * 2) {
                 objectB = i;
                 bx = world.getX(i);
                 by = world.getY(i);
