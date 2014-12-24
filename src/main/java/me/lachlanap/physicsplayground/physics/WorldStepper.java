@@ -44,7 +44,7 @@ public class WorldStepper {
         if (!world.isInflowEnabled())
             return;
 
-        double radius = .1;
+        double radius = .5;
 
         for (int i = 0; i < 5; i++) {
             double x = world.getInflowX() + (Math.random() * radius * 2 - radius) * 2;

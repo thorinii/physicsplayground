@@ -54,7 +54,7 @@ public class CollisionConstraintSolver {
         Vector2 pos2 = new Vector2();
         Vector2 difference = new Vector2();
 
-        for (int j = 0; j < world.getObjects(); j++) {
+        for (int j = i + 1; j < world.getObjects(); j++) {
             if (i == j)
                 continue;
 
@@ -89,7 +89,7 @@ public class CollisionConstraintSolver {
                 difference.y = penetration * normalY * 0.5 * 0.99;
 
                 world.setPosition(i, pos1.plus(difference));
-                //world.setPosition(j, pos2.minus(difference));
+                world.setPosition(j, pos2.minus(difference));
             }
         }
     }
