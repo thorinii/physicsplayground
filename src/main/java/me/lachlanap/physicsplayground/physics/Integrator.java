@@ -38,6 +38,8 @@ public class Integrator {
             obj.pos.set(next);
             world.updateObject(obj);
         }
+
+        world.swapBuffers();
     }
 
 }

@@ -47,4 +47,9 @@ public class IntList {
         array[i] = array[size - 1];
         size--;
     }
+
+    public void copyFrom(IntList from) {
+        size = from.size;
+        System.arraycopy(from.array, 0, array, 0, size);
+    }
 }

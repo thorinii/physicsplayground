@@ -34,6 +34,7 @@ public class DistanceConstraintSolver {
             world.updateObject(a);
             world.updateObject(b);
         }
-    }
 
+        world.swapBuffers();
+    }
 }

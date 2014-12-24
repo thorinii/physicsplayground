@@ -20,6 +20,8 @@ public class CollisionConstraintSolver {
             pool.invoke(new SplitterTask(world, 0, world.getObjects()));
         else
             solveRange(world, 0, world.getObjects());
+
+        world.swapBuffers();
     }
 
     private void solveRange(World world, int start, int finish) {
@@ -54,7 +56,7 @@ public class CollisionConstraintSolver {
         PointObject b = new PointObject();
         Vector2 difference = new Vector2();
 
-        for (int j = a.id + 1; j < world.getObjects(); j++) {
+        for (int j = 0; j < world.getObjects(); j++) {
             if (a.id == j)
                 continue;
 
@@ -89,8 +91,8 @@ public class CollisionConstraintSolver {
                 difference.y = penetration * normalY * 0.5 * 0.99;
 
                 a.pos.plus(difference);
-                b.pos.minus(difference);
-                world.updateObject(b);
+                //b.pos.minus(difference);
+                //world.updateObject(b);
             }
         }
     }
