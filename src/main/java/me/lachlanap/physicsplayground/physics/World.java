@@ -126,19 +126,34 @@ public class World {
         return gravity;
     }
 
+    public PointObject getObject(int i, PointObject store) {
+        store.id = i;
+        store.x = x.get(i);
+        store.y = y.get(i);
+        store.px = px.get(i);
+        store.py = py.get(i);
+        store.radius = r.get(i);
+        store.pinX = pinX.get(i);
+        store.pinY = pinY.get(i);
 
+        return store;
+    }
+
+    @Deprecated
     public Vector2 getPosition(int i, Vector2 store) {
         store.x = x.get(i);
         store.y = y.get(i);
         return store;
     }
 
+    @Deprecated
     public Vector2 getPrevious(int i, Vector2 store) {
         store.x = px.get(i);
         store.y = py.get(i);
         return store;
     }
 
+    @Deprecated
     public Vector2 getPin(int i, Vector2 store) {
         store.x = pinX.get(i);
         store.y = pinY.get(i);
@@ -146,36 +161,44 @@ public class World {
     }
 
 
+    @Deprecated
     public void setPosition(int i, Vector2 value) {
         x.set(i, value.x);
         y.set(i, value.y);
     }
 
+    @Deprecated
     public void setPrevious(int i, Vector2 value) {
         px.set(i, value.x);
         py.set(i, value.y);
     }
 
+    @Deprecated
     public double getX(int i) {
         return x.get(i);
     }
 
+    @Deprecated
     public double getY(int i) {
         return y.get(i);
     }
 
+    @Deprecated
     public double getRadius(int i) {
         return r.get(i);
     }
 
+    @Deprecated
     public double getWidth(int i) {
         return r.get(i) * 2;
     }
 
+    @Deprecated
     public double getHeight(int i) {
         return r.get(i) * 2;
     }
 
+    @Deprecated
     public void setY(int i, double value) {
         y.set(i, value);
     }

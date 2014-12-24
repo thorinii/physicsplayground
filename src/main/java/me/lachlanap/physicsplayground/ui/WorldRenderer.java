@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelEvent;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import me.lachlanap.physicsplayground.physics.PointObject;
 import me.lachlanap.physicsplayground.physics.Timer;
 import me.lachlanap.physicsplayground.physics.World;
 import me.lachlanap.physicsplayground.ui.tools.AddCircleTool;
@@ -108,9 +109,13 @@ class WorldRenderer extends JComponent {
     }
 
     private void drawObjects(Graphics2D g) {
+        PointObject obj = new PointObject();
+
         for (int i = 0; i < world.getObjects(); i++) {
-            double x = world.getX(i), y = world.getY(i);
-            double w = world.getWidth(i), h = world.getHeight(i);
+            world.getObject(i, obj);
+
+            double x = obj.x, y = obj.y;
+            double w = obj.radius * 2, h = obj.radius * 2;
 
             x = view.absoluteToViewX(x);
             y = view.absoluteToViewY(y);
@@ -122,7 +127,7 @@ class WorldRenderer extends JComponent {
             if (y + h / 2 < 0 || y - h / 2 > getHeight())
                 continue;
 
-            g.setColor(world.isPinned(i) ? Color.ORANGE : Color.RED);
+            g.setColor(obj.isPinned() ? Color.ORANGE : Color.RED);
             g.drawOval((int) (x - w / 2), (int) (y - h / 2), (int) w, (int) h);
         }
     }
