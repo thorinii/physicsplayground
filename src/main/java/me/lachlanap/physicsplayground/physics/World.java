@@ -98,14 +98,22 @@ public class World {
     }
 
     public PointObject getObject(int i, PointObject store) {
+        return getObjectFromBuffer(bufRead, i, store);
+    }
+
+    public PointObject getObjectFromWriteBuffer(int i, PointObject store) {
+        return getObjectFromBuffer(bufWrite, i, store);
+    }
+
+    private PointObject getObjectFromBuffer(Buffer buf, int i, PointObject store) {
         store.id = i;
-        store.pos.x = bufRead.x.get(i);
-        store.pos.y = bufRead.y.get(i);
-        store.prev.x = bufRead.px.get(i);
-        store.prev.y = bufRead.py.get(i);
-        store.radius = bufRead.r.get(i);
-        store.pin.x = bufRead.pinX.get(i);
-        store.pin.y = bufRead.pinY.get(i);
+        store.pos.x = buf.x.get(i);
+        store.pos.y = buf.y.get(i);
+        store.prev.x = buf.px.get(i);
+        store.prev.y = buf.py.get(i);
+        store.radius = buf.r.get(i);
+        store.pin.x = buf.pinX.get(i);
+        store.pin.y = buf.pinY.get(i);
 
         return store;
     }

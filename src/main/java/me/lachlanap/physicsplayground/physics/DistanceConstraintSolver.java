@@ -15,8 +15,8 @@ public class DistanceConstraintSolver {
         for (int i = 0; i < world.getConstraints(); i++) {
             world.getConstraint(i, constraint);
 
-            world.getObject(constraint.a, a);
-            world.getObject(constraint.b, b);
+            world.getObjectFromWriteBuffer(constraint.a, a);
+            world.getObjectFromWriteBuffer(constraint.b, b);
 
             a.pos.minus(b.pos, difference);
             double actualDistance = difference.length();
