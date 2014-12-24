@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelEvent;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import me.lachlanap.physicsplayground.physics.Constraint;
 import me.lachlanap.physicsplayground.physics.PointObject;
 import me.lachlanap.physicsplayground.physics.Timer;
 import me.lachlanap.physicsplayground.physics.World;
@@ -133,12 +134,12 @@ class WorldRenderer extends JComponent {
     }
 
     private void drawConstraints(Graphics2D g) {
+        Constraint constraint = new Constraint();
         for (int i = 0; i < world.getConstraints(); i++) {
-            int a = world.getConstraintA(i);
-            int b = world.getConstraintB(i);
+            world.getConstraint(i, constraint);
 
-            double x1 = world.getX(a), y1 = world.getY(a);
-            double x2 = world.getX(b), y2 = world.getY(b);
+            double x1 = world.getX(constraint.a), y1 = world.getY(constraint.a);
+            double x2 = world.getX(constraint.b), y2 = world.getY(constraint.b);
 
             x1 = view.absoluteToViewX(x1);
             y1 = view.absoluteToViewY(y1);

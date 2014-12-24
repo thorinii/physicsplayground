@@ -7,6 +7,6 @@ package me.lachlanap.physicsplayground.physics;
 public class Constraint {
 
     public int id;
-    public int objectA, objectB;
+    public int a, b;
     public double distance, strength;
 }

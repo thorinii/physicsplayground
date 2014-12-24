@@ -147,29 +147,22 @@ public class World {
         return store;
     }
 
+    public Constraint getConstraint(int i, Constraint store) {
+        store.id = i;
+        store.a = constraintA.get(i);
+        store.b = constraintB.get(i);
+        store.distance = constraintDistance.get(i);
+        store.strength = constraintStrength.get(i);
+
+        return store;
+    }
+
     public double getX(int i) {
         return x.get(i);
     }
 
     public double getY(int i) {
         return y.get(i);
-    }
-
-
-    public int getConstraintA(int i) {
-        return constraintA.get(i);
-    }
-
-    public int getConstraintB(int i) {
-        return constraintB.get(i);
-    }
-
-    public double getConstraintRestingDistance(int i) {
-        return constraintDistance.get(i);
-    }
-
-    public double getConstraintStrength(int i) {
-        return constraintStrength.get(i);
     }
 
     public int getObjects() {

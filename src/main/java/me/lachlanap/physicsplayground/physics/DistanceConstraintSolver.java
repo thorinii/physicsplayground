@@ -11,14 +11,12 @@ public class DistanceConstraintSolver {
         PointObject b = new PointObject();
         Vector2 difference = new Vector2();
 
+        Constraint constraint = new Constraint();
         for (int i = 0; i < world.getConstraints(); i++) {
-            int aid = world.getConstraintA(i);
-            int bid = world.getConstraintB(i);
+            world.getConstraint(i, constraint);
 
-            double restingDistance = world.getConstraintRestingDistance(i);
-            double strength = world.getConstraintStrength(i);
-            world.getObject(aid, a);
-            world.getObject(bid, b);
+            world.getObject(constraint.a, a);
+            world.getObject(constraint.b, b);
 
             a.pos.minus(b.pos, difference);
             double actualDistance = difference.length();
@@ -27,7 +25,7 @@ public class DistanceConstraintSolver {
             if (actualDistance == 0)
                 error = 1;
             else
-                error = (restingDistance - actualDistance) / actualDistance;
+                error = (constraint.distance - actualDistance) / actualDistance;
 
             difference.mul(0.5 * error);
             a.pos.plus(difference);
