@@ -12,6 +12,8 @@ public class World {
     private final double gravity;
     private final double floor;
 
+    private final PartitionGrid partitionGrid;
+
     private Buffer bufRead, bufWrite;
 
     private boolean ewo;
@@ -24,6 +26,8 @@ public class World {
         gravity = -9.81;
         floor = 0;
 
+        partitionGrid = new PartitionGrid(1024);
+
         bufRead = new Buffer();
         bufWrite = new Buffer();
 
@@ -33,6 +37,7 @@ public class World {
     }
 
     public void reset() {
+        partitionGrid.clear();
         bufRead.reset();
         bufWrite.reset();
     }
@@ -140,6 +145,10 @@ public class World {
         return store;
     }
 
+    public PartitionGrid getPartitionGrid() {
+        return partitionGrid;
+    }
+
     public double getX(int i) {
         return bufRead.x.get(i);
     }
@@ -209,6 +218,32 @@ public class World {
     public void deleteConstraint(int i) {
         bufRead.deleteConstraint(i);
         bufWrite.deleteConstraint(i);
+    }
+
+    public void buildPartitionGrid() {
+        double xMin, xMax, yMin, yMax;
+        xMin = yMin = Double.MAX_VALUE;
+        xMax = yMax = -Double.MAX_VALUE;
+        for (int i = 0; i < getObjects(); i++) {
+            double x = bufRead.x.get(i);
+            double y = bufRead.y.get(i);
+
+            xMin = Math.min(xMin, x);
+            xMax = Math.max(xMax, x);
+            yMin = Math.min(yMin, y);
+            yMax = Math.max(yMax, y);
+        }
+
+        partitionGrid.setBounds(xMin, yMin, xMax, yMax);
+
+
+        for (int i = 0; i < getObjects(); i++) {
+            double x = bufRead.x.get(i);
+            double y = bufRead.y.get(i);
+            double r = bufRead.r.get(i);
+
+            partitionGrid.insert(i, x, y, r);
+        }
     }
 
     public static class Buffer {
