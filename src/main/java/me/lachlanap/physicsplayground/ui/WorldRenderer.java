@@ -11,10 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Executor;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import me.lachlanap.physicsplayground.physics.Constraint;
-import me.lachlanap.physicsplayground.physics.PointObject;
-import me.lachlanap.physicsplayground.physics.Timer;
-import me.lachlanap.physicsplayground.physics.World;
+import me.lachlanap.physicsplayground.physics.*;
 import me.lachlanap.physicsplayground.ui.tools.AddCircleTool;
 import me.lachlanap.physicsplayground.ui.tools.Tool;
 
@@ -81,11 +78,44 @@ class WorldRenderer extends JComponent {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, getWidth(), getHeight());
 
+
         drawScale((Graphics2D) g);
+        drawPartitioning((Graphics2D) g);
+
         drawWorld((Graphics2D) g);
 
         drawTool((Graphics2D) g);
         drawDiagnostics((Graphics2D) g);
+    }
+
+    private void drawPartitioning(Graphics2D g) {
+        PartitionGrid grid = world.getPartitionGrid();
+
+        int divisions = grid.getDivisions();
+        double xMin = view.absoluteToViewX(grid.getXMin());
+        double xMax = view.absoluteToViewX(grid.getXMax());
+        double xSpacing = view.relativeToView(grid.getXSpacing());
+        double yMin = view.absoluteToViewY(grid.getYMin());
+        double yMax = view.absoluteToViewY(grid.getYMax());
+        double ySpacing = view.relativeToView(grid.getYSpacing());
+
+        for (int i = 0; i < divisions; i++) {
+            for (int j = 0; j < divisions; j++) {
+                PartitionGrid.Cell cell = grid.getCell(i, j);
+
+                if (cell.length() > 0) {
+                    int value = 255 - Math.max(5, Math.min(255, cell.length() * 30));
+
+                    g.setColor(new Color(255, 128 + value / 2, value));
+                    g.fillRect((int) (i * xSpacing + xMin), (int) (yMin - j * ySpacing),
+                               (int) Math.ceil(xSpacing), (int) Math.ceil(ySpacing));
+                }
+            }
+        }
+
+        g.setColor(Color.ORANGE);
+        g.drawRect((int) xMin, (int) yMax,
+                   (int) (xMax - xMin), (int) (yMin - yMax));
     }
 
     private void drawScale(Graphics2D g) {

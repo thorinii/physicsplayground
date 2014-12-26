@@ -9,7 +9,7 @@ import java.util.Iterator;
  */
 public class PartitionGrid {
 
-    private static final double MIN_GRID_SPACING = 1;
+    private static final double MIN_GRID_SIZE = 100;
 
     private final int divisions;
     private final Cell[] cells;
@@ -29,16 +29,46 @@ public class PartitionGrid {
             cell.clear();
     }
 
+    public int getDivisions() {
+        return divisions;
+    }
+
+    public double getXMin() {
+        return xMin;
+    }
+
+    public double getYMin() {
+        return yMin;
+    }
+
+    public double getXSpacing() {
+        return xSpacing;
+    }
+
+    public double getYSpacing() {
+        return ySpacing;
+    }
+
+
+    public double getXMax() {
+        return xMax;
+    }
+
+    public double getYMax() {
+        return yMax;
+    }
+
+
     public void setBounds(double xMin, double yMin, double xMax, double yMax) {
         clear();
 
         this.xMin = xMin;
         this.yMin = yMin;
-        this.xMax = xMax;
-        this.yMax = yMax;
+        this.xMax = Math.max(xMin + MIN_GRID_SIZE, xMax);
+        this.yMax = Math.max(yMin + MIN_GRID_SIZE, yMax);
 
-        xSpacing = Math.max(MIN_GRID_SPACING, (xMax - xMin) / divisions);
-        ySpacing = Math.max(MIN_GRID_SPACING, (yMax - yMin) / divisions);
+        xSpacing = (xMax - xMin) / divisions;
+        ySpacing = (yMax - yMin) / divisions;
     }
 
     public void insert(int id, double x, double y, double radius) {
@@ -128,7 +158,7 @@ public class PartitionGrid {
         };
     }
 
-    private Cell getCell(int x, int y) {
+    public Cell getCell(int x, int y) {
         if (x >= divisions || y >= divisions)
             throw new IllegalArgumentException("Cell index out of range: (" + x + "," + y + ")");
         if (x < 0 || y < 0)
@@ -137,7 +167,7 @@ public class PartitionGrid {
         return cells[x + y * divisions];
     }
 
-    private static final class Cell {
+    public static final class Cell {
 
         private int[] list = new int[2];
         private int count = 0;
