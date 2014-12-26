@@ -173,6 +173,9 @@ public class PartitionGrid {
         private int count = 0;
 
         public void clear() {
+            if (list.length > 8 && count < list.length / 2) {
+                list = new int[Math.max(2, Integer.highestOneBit(count) << 1)];
+            }
             count = 0;
         }
 
