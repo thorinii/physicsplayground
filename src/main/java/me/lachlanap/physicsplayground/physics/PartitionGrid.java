@@ -66,29 +66,16 @@ public class PartitionGrid {
             public Iterator<PointObject> iterator() {
                 return new Iterator<PointObject>() {
                     final PointObject tmp = new PointObject();
-                    final SortedCell objectsFound = new SortedCell();
                     final int cellX, cellY;
                     final Cell cell;
-                    final int startCellX, startCellY, endCellX, endCellY;
 
-                    int currentCellX, currentCellY, currentCellIndex;
+                    int currentCellIndex;
                     boolean consumed = false;
 
                     {
                         cellX = (int) Math.min(divisions - 1, (test.pos.x - xMin) / xSpacing);
                         cellY = (int) Math.min(divisions - 1, (test.pos.y - yMin) / ySpacing);
                         cell = getCell(cellX, cellY);
-
-                        double expanseX = test.radius / xSpacing;
-                        double expanseY = test.radius / ySpacing;
-
-                        startCellX = (int) Math.max(Math.floor(cellX - expanseX), 0);
-                        startCellY = (int) Math.max(Math.floor(cellY - expanseY), 0);
-                        endCellX = (int) Math.min(Math.ceil(cellX + expanseX + 1), divisions);
-                        endCellY = (int) Math.min(Math.ceil(cellY + expanseY + 1), divisions);
-
-                        currentCellX = startCellX;
-                        currentCellY = startCellY;
                     }
 
                     private void findNext() {
@@ -101,10 +88,9 @@ public class PartitionGrid {
                             if (id == test.id)
                                 currentCellIndex++;
                             else {
-                                if (id == test.id || objectsFound.contains(id)) {
+                                if (id == test.id) {
                                     currentCellIndex++;
                                 } else {
-                                    //objectsFound.insert(id);
                                     world.getObject(id, tmp);
 
                                     consumed = false;

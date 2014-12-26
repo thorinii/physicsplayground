@@ -87,11 +87,14 @@ class WorldRenderer extends JComponent {
         g.setColor(Color.LIGHT_GRAY);
         drawScaleLines(ppm, g);
 
-        g.setColor(Color.GRAY);
+        g.setColor(Color.DARK_GRAY);
         drawScaleLines(ppm * 10, g);
     }
 
     private void drawScaleLines(double ppm, Graphics2D g) {
+        if (ppm < 5)
+            return;
+
         double start = Math.floor(view.getOffsetPixelsX() % ppm);
         double end = start + Math.ceil(getWidth() / ppm) * ppm;
         for (double x = start; x < end; x += ppm)
