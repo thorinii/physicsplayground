@@ -8,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Executor;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import me.lachlanap.physicsplayground.physics.Constraint;
@@ -27,6 +28,8 @@ class WorldRenderer extends JComponent {
     private final View view;
     private final Timer timer;
 
+    private Executor executor;
+
     private int renderFps;
     private int physicsFps;
 
@@ -45,6 +48,10 @@ class WorldRenderer extends JComponent {
         setFocusable(true);
 
         tool = new AddCircleTool(world, 0.5);
+    }
+
+    public void setExecutor(Executor executor) {
+        this.executor = executor;
     }
 
     public Timer getTimer() {
@@ -198,17 +205,27 @@ class WorldRenderer extends JComponent {
                 b1 = true;
 
                 Point diff = e.getPoint();
-                double x = view.absoluteFromViewX(diff.x);
-                double y = view.absoluteFromViewY(diff.y);
+                final double x = view.absoluteFromViewX(diff.x);
+                final double y = view.absoluteFromViewY(diff.y);
 
-                tool.mouseDown(x, y);
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        tool.mouseDown(x, y);
+                    }
+                });
             } else if (e.getButton() == MouseEvent.BUTTON2) {
                 start = e.getPoint();
 
                 initialOffsetX = view.getOffsetPixelsX();
                 initialOffsetY = view.getOffsetPixelsY();
             } else if (e.getButton() == MouseEvent.BUTTON3) {
-                world.reset();
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        world.reset();
+                    }
+                });
             }
 
             repaint();
@@ -222,10 +239,15 @@ class WorldRenderer extends JComponent {
                 b1 = false;
 
                 Point diff = e.getPoint();
-                double x = view.absoluteFromViewX(diff.x);
-                double y = view.absoluteFromViewY(diff.y);
+                final double x = view.absoluteFromViewX(diff.x);
+                final double y = view.absoluteFromViewY(diff.y);
 
-                tool.mouseUp(x, y);
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        tool.mouseUp(x, y);
+                    }
+                });
             }
 
             repaint();
@@ -242,10 +264,15 @@ class WorldRenderer extends JComponent {
 
             if (b1) {
                 Point diff = e.getPoint();
-                double x = view.absoluteFromViewX(diff.x);
-                double y = view.absoluteFromViewY(diff.y);
+                final double x = view.absoluteFromViewX(diff.x);
+                final double y = view.absoluteFromViewY(diff.y);
 
-                tool.mouseDrag(x, y);
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        tool.mouseDrag(x, y);
+                    }
+                });
             }
 
             repaint();

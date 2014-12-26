@@ -1,5 +1,8 @@
 package me.lachlanap.physicsplayground.ui;
 
+import java.util.Queue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import me.lachlanap.physicsplayground.physics.World;
 import me.lachlanap.physicsplayground.physics.WorldStepper;
 
@@ -7,7 +10,7 @@ import me.lachlanap.physicsplayground.physics.WorldStepper;
  *
  * @author lachlan
  */
-class WorldAdvancer {
+class WorldAdvancer implements Executor {
 
     private static final double DEFAULT_TIMESTEP = 1 / 60.0;
 
@@ -15,6 +18,8 @@ class WorldAdvancer {
     private final WorldStepper stepper;
     private final WorldRenderer renderer;
     private final Thread thread;
+
+    private final Queue<Runnable> tasks;
 
     private double timestep;
     private volatile boolean active;
@@ -26,6 +31,8 @@ class WorldAdvancer {
 
         this.thread = new Thread(new AdvancerTask());
         thread.setDaemon(true);
+
+        this.tasks = new LinkedBlockingQueue<>();
 
         timestep = DEFAULT_TIMESTEP;
         active = true;
@@ -41,6 +48,11 @@ class WorldAdvancer {
 
     public boolean isActive() {
         return active;
+    }
+
+    @Override
+    public void execute(Runnable command) {
+        tasks.add(command);
     }
 
     private class AdvancerTask implements Runnable {
@@ -60,8 +72,10 @@ class WorldAdvancer {
             try {
                 while (true) {
                     gameLoop();
+                    executeTasks();
 
-                    Thread.sleep(1);
+                    if (!active)
+                        Thread.sleep(1);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -81,6 +95,13 @@ class WorldAdvancer {
                 physicsFps = 0;
 
                 render(now);
+            }
+        }
+
+        private void executeTasks() {
+            Runnable r;
+            while ((r = tasks.poll()) != null) {
+                r.run();
             }
         }
 

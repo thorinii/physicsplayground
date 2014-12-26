@@ -15,7 +15,7 @@ public class Timer {
         this.times = new HashMap<>();
     }
 
-    public void computeTime(String name, long beginNanos) {
+    public synchronized void computeTime(String name, long beginNanos) {
         long now = System.nanoTime();
         long dtNanos = now - beginNanos;
 
@@ -25,7 +25,7 @@ public class Timer {
     }
 
     @Override
-    public String toString() {
+    public synchronized String toString() {
         StringBuilder builder = new StringBuilder();
 
         for (Map.Entry<String, Double> e : times.entrySet()) {
@@ -36,6 +36,4 @@ public class Timer {
 
         return builder.toString();
     }
-
-
 }

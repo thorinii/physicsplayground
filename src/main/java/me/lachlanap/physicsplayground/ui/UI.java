@@ -29,6 +29,8 @@ public class UI {
         this.worldAdvancer = new WorldAdvancer(world, new WorldStepper(world), worldRenderer);
         this.optionsPanel = new OptionsPanel(world, worldAdvancer, worldRenderer);
 
+        worldRenderer.setExecutor(worldAdvancer);
+
         this.frame = new JFrame("Physics Playground");
         setup();
     }

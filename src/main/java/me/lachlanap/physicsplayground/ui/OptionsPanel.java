@@ -74,10 +74,16 @@ class OptionsPanel extends JPanel {
 
         @Override
         public void run() {
-            PointObject o = new PointObject();
-            for (int i = 0; i < world.getObjects(); i++) {
-                world.updateObject(world.getObject(i, o).setVelocity(0, 0));
-            }
+            advancer.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    PointObject o = new PointObject();
+                    for (int i = 0; i < world.getObjects(); i++) {
+                        world.updateObject(world.getObject(i, o).setVelocity(0, 0));
+                    }
+                }
+            });
         }
     }
 
